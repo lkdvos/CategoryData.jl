@@ -1,0 +1,7 @@
+[fusiondata]
+git-tree-sha1 = "fca6fd8f9067457a04423db3769be7dbc09fed52"
+
+    [[fusiondata.download]]
+    url = "https://github.com/JCBridgeman/smallRankUnitaryFusionData/tarball/a6ba1c3/"
+    sha256 = "85fae993c55c314034254a639101f20dbe32f6b3c783b796403fb87b69157ca5"
+    

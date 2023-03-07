@@ -13,6 +13,7 @@ Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 TensorKit = "07d1fe3e-3e46-537d-9eac-e9e13d0d4cec"
 
 [compat]
+SparseArrayKit = "0.2"
 julia = "1.6"
 
 [extras]

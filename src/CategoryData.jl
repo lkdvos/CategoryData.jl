@@ -14,8 +14,6 @@ using SparseArrayKit
 export FusionRing, SimpleFusionRing, UnitaryFusionCategory, UFC, PreModularFusionCategory, PMFC, Object
 export multiplicity, rank
 
-export H1, H3, ν, η, μ, ρ
-
 ######################
 ## Type definitions ##
 ######################

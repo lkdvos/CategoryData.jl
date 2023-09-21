@@ -1,7 +1,7 @@
 [fusiondata]
-git-tree-sha1 = "fca6fd8f9067457a04423db3769be7dbc09fed52"
+git-tree-sha1 = "a50388a06672a690097b50854354b417294fabea"
 
     [[fusiondata.download]]
-    url = "https://github.com/JCBridgeman/smallRankUnitaryFusionData/tarball/a6ba1c3/"
-    sha256 = "85fae993c55c314034254a639101f20dbe32f6b3c783b796403fb87b69157ca5"
+    url = "https://github.com/lkdvos/CategoryData.jl/archive/refs/tags/data-v0.1.0.tar.gz"
+    sha256 = "f80739d99a0f5ddbd88fa96d6b3cf8d977d9a9b8b18d75a2a8e65b02ed26aa41"
     

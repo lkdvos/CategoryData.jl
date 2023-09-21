@@ -11,40 +11,75 @@ using TensorKit: SimpleFusion, GenericFusion, Anyonic, NoBraiding
 
 using SparseArrayKit
 
-export FusionRing, SimpleFusionRing, UnitaryFusionCategory, UFC, PreModularFusionCategory, PMFC, Object
+export FusionRing, SimpleFusionRing
+export UnitaryFusionCategory, PreModularFusionCategory
+export Object
 export multiplicity, rank
 
 ######################
 ## Type definitions ##
 ######################
-abstract type FusionRing{R,N,I,m} end
-fusionring(::Type{<:FusionRing{R,N,I,m}}) where {R,N,I,m} = FusionRing{R,N,I,m}
-Base.string(::Type{FusionRing{R,N,I,m}}) where {R,N,I,m} = "FR_$(R)_$(N)_$(I)_$(m)"
+abstract type FusionRing{R,M,N,I} end
+fusionring(::Type{<:FusionRing{R,M,N,I}}) where {R,M,N,I} = FusionRing{R,M,N,I}
 
+subscript(i::Integer) = i < 0 ? error("$i is negative") : string(Iterators.reverse('₀' + d for d in digits(i))...)
+function superscript(i::Integer)
+    if i < 0 
+        throw(ArgumentError("$i is negative"))
+    else
+        # for some reason superscript two and three are not in the logical spots of the table
+        return string(map(Iterators.reverse(digits(i))) do x
+            return x == 2 ? '²' : x == 3 ? '³' : '⁰' + x
+        end...)
+    end
+end
+
+
+function Base.show(io::IO, ::MIME"text/plain", ::Type{<:FusionRing{R,M,N,I}}) where {R,M,N,I}
+    if get(io, :compact, true)
+        if M == 1
+            print(io, "FR$(superscript(R))⁻$(superscript(N))$(subscript(I))")
+        else
+            print(io, "FR$(superscript(R))⁻$(superscript(M))⁻$(superscript(N))$(subscript(I))")
+        end
+    else
+        show(io, FusionRing{R,M,N,I})
+    end
+end
+
+# access type parameters
 rank(::Type{<:FusionRing{R}}) where {R} = R
-selfduality(::Type{<:FusionRing{R,N}}) where {R,N} = N
-multiplicity(::Type{<:FusionRing{R,N,I,m}}) where {R,N,I,m} = m # Support non-trivial multiplicity in development
+selfduality(::Type{<:FusionRing{<:Any,<:Any,N}}) where {N} = N
+multiplicity(::Type{<:FusionRing{<:Any,M}}) where {M} = M
+ring_index(::Type{<:FusionRing{<:Any,<:Any,<:Any,I}}) where {I} = I
 
-const SimpleFusionRing{R,N,I} = FusionRing{R,N,I,1}
-Base.string(::Type{SimpleFusionRing{R,N,I}}) where {R,N,I} = "FR_$(R)_$(N)_$(I)"
 
-abstract type UnitaryFusionCategory{R,N,I,m,D} <: FusionRing{R,N,I,m} end
+const SimpleFusionRing{R,N,I} = FusionRing{R,1,N,I}
 
-category_index(::Type{<:UnitaryFusionCategory{R,N,I,m,D}}) where {R,N,I,m,D} = D
+abstract type UnitaryFusionCategory{R,M,N,I,D} <: FusionRing{R,M,N,I} end
 
-function Base.string(::Type{UnitaryFusionCategory{R,N,I,D}}) where {R,N,I,D}
-    return "FR_$(R)_$(N)_$(I)_$(D)"
+category_index(::Type{<:UnitaryFusionCategory{<:Any,<:Any,<:Any,<:Any,D}}) where {D} = D
+
+function Base.show(io::IO, ::MIME"text/plain", ::Type{<:UnitaryFusionCategory{R,M,N,I,D}}) where {R,M,N,I,D}
+    if M == 1
+        print(io, "UFC$(superscript(R))⁻$(superscript(N))$(subscript(I))₋$(subscript(D))")
+    else
+        print(io, "UFC$(superscript(R))⁻$(superscript(M))⁻$(superscript(N))$(subscript(I))₋$(subscript(D))")
+    end
 end
 
-abstract type PreModularFusionCategory{R,N,I,m,D₁,D₂} <: UnitaryFusionCategory{R,N,I,m,D₁} end
+abstract type PreModularFusionCategory{R,M,N,I,D₁,D₂} <: UnitaryFusionCategory{R,M,N,I,D₁} end
+braid_index(::Type{<:PreModularFusionCategory{<:Any,<:Any,<:Any,<:Any,<:Any,D₂}}) where {D₂} = D₂
 
-braid_index(::Type{<:PreModularFusionCategory{R,N,I,m,D₁,D₂}}) where {R,N,I,m,D₁,D₂} = D₂
-
-function Base.string(::Type{PreModularFusionCategory{R,N,I,m,D₁,D₂}}) where {R,N,I,m,D₁,D₂}
-    return "FR_$(R)_$(N)_$(I)_$(D₁)_$(D₂)"
+function Base.show(io::IO, ::MIME"text/plain", ::Type{<:PreModularFusionCategory{R,M,N,I,D₁,D₂}}) where {R,M,N,I,D₁,D₂}
+    if M == 1 ₋
+        print(io, "PMFC$(superscript(R))⁻$(superscript(N))$(subscript(I))₋$(subscript(D₁))₋$(subscript(D₂))")
+    else
+        print(io, "PMFC$(superscript(R))⁻$(superscript(M))⁻$(superscript(N))$(subscript(I))₋$(subscript(D₁))₋$(subscript(D₂))")
+    end
 end
 
-struct Object{FR} <: Sector where {FR<:FusionRing}
+struct Object{FR<:FusionRing} <: Sector
     id::Int
     function Object{FR}(a::Int) where {FR<:FusionRing}
         0 < a <= rank(FR) || throw(ArgumentError("Unknown $FR object $a."))
@@ -52,35 +87,73 @@ struct Object{FR} <: Sector where {FR<:FusionRing}
     end
 end
 
+function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
+    if get(io, :typeinfo, Any) !== Object{FR}
+        print(io, ψ.id, "∈ 𝒪(", FR, ")")
+    else
+        print(io, ψ.id)
+    end
+end
+
 ##################
 ## Type aliases ##
 ##################
 
-const FR{R,N,I,m} = FusionRing{R,N,I,m}
-const UFC{R,N,I,m,D} = UnitaryFusionCategory{R,N,I,m,D}
-const PMFC{R,N,I,D₁,D₂} = PreModularFusionCategory{R,N,I,D₁,D₂}
+const FR{R,M,N,I} = FusionRing{R,M,N,I}
+const UFC{R,M,N,I,D} = UnitaryFusionCategory{R,M,N,I,D}
+const PMFC{R,M,N,I,D₁,D₂} = PreModularFusionCategory{R,M,N,I,D₁,D₂}
 
-const Z2 = PMFC{2,0,1,0,0}
-const Ising = PMFC{3,0,1,1,3}
-const RepS3 = PMFC{3,0,2,0,0}
-const Z3 = PMFC{3,2,1,0,0}
-const Z2xZ2 = PMFC{4,0,1,0,0}
-const RepD5 = PMFC{4,0,3,0,0}
-const Z4 = PMFC{4,2,1,0,0}
-const RepD4 = PMFC{5,0,1,3,0}
-const RepD7 = PMFC{5,0,4,0,0}
-const RepS4 = PMFC{5,0,6,1,0}
-const Z5 = PMFC{5,4,1,0,0}
-const Z6 = PMFC{6,4,1,0,0}
+const Z2 = PMFC{2,1,0,1,0,0}
+const Ising = PMFC{3,1,0,1,1,3}
+const RepS3 = PMFC{3,1,0,2,0,0}
+const Z3 = PMFC{3,1,2,1,0,0}
+const Z2xZ2 = PMFC{4,1,0,1,0,0}
+const RepD5 = PMFC{4,1,0,3,0,0}
+const Z4 = PMFC{4,1,2,1,0,0}
+const RepD4 = PMFC{5,1,0,1,3,0}
+const RepD7 = PMFC{5,1,0,4,0,0}
+const RepS4 = PMFC{5,1,0,6,1,0}
+const Z5 = PMFC{5,1,4,1,0,0}
+const Z6 = PMFC{6,1,4,1,0,0}
 
-const H1 = UFC{4,0,1,2,0}
-    const μ = Object{H1}(2)
-    const η = Object{H1}(3)
-    const ν = Object{H1}(4)
-const Fib = UFC{2,0,2,1,0}
-const H2 = UFC{6,2,8,1,2}
-const H3 = UFC{6,2,8,1,3}
-    const ρ = Object{H3}(4) # Need to double check!
+const H1 = UFC{4,2,0,1,0}
+
+function Object{H1}(a::Symbol)
+    a === :I && return Object{H1}(1)
+    a === :μ && return Object{H1}(2)
+    a === :η && return Object{H1}(3)
+    a === :ν && return Object{H1}(4)
+    throw(ArgumentError("Unknown $H1 object $a."))
+end
+
+function Base.show(io::IO, ::MIME"text/plain", ψ::Object{H1})
+    symbol = ψ.id == 1 ? :I : ψ.id == 2 ? :μ : ψ.id == 3 ? :η : :ν
+    if get(io, :typeinfo, Any) !== Object{H1}
+        print(io, symbol, " ∈ 𝒪($H1)")
+    else
+        print(io, symbol)
+    end
+end
+
+
+const Fib = UFC{2,1,0,2,0}
+const H2 = UFC{6,1,2,8,2}
+const H3 = UFC{6,1,2,8,3}
+
+function Object{H3}(a::Symbol)
+    a === :I && return Object{H3}(1)
+    a === :ρ && return Object{H3}(4) # Need to double check!
+    throw(ArgumentError("Unknown $H3 object $a."))
+end
+
+function Base.show(io::IO, ::MIME"text/plain", ψ::Object{H3})
+    symbol = ψ.id == 1 ? :I : ψ.id == 4 ? :ρ : ψ.id
+    if get(io, :typeinfo, Any) !== H1
+        print(io, symbol, " ∈ 𝒪($H1)")
+    else
+        print(io, symbol)
+    end
+end
 
 ##########################
 ## Common functionality ##
@@ -160,7 +233,7 @@ function list_available()
             FR_str = last(splitpath(dir))
             _, R, N, I, m = split(FR_str, "_")
             R, N, I, m = parse.(Int, (R, N, I, m))
-            push!(fusionrings, FusionRing{R,N,I,m})
+            push!(fusionrings, FusionRing{R,M,N,I})
         elseif files == ["F.txt"]
             FR_str, D_str = splitpath(dir)[(end - 1):end]
             prefix, R, N, I, m = split(FR_str, "_")

@@ -16,6 +16,8 @@ export UnitaryFusionCategory, PreModularFusionCategory
 export Object
 export multiplicity, rank
 
+export H1, H3, ν, η, μ, ρ
+
 ######################
 ## Type definitions ##
 ######################

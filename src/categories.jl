@@ -32,3 +32,11 @@ multiplicity(::Type{E6}) = 2
 selfduality(::Type{E6}) = 0
 N_artifact(::Type{E6}) = joinpath(artifact_path, "Nsymbols", "E6.txt")
 F_artifact(::Type{E6}) = joinpath(artifact_path, "Fsymbols", "E6.txt")
+
+struct A4 <: BraidedCategory end
+rank(::Type{A4}) = 4
+multiplicity(::Type{A4}) = 2
+selfduality(::Type{A4}) = 2
+N_artifact(::Type{A4}) = joinpath(artifact_path, "Nsymbols", "A4.txt")
+F_artifact(::Type{A4}) = joinpath(artifact_path, "Fsymbols", "A4.txt")
+R_artifact(::Type{A4}) = joinpath(artifact_path, "Rsymbols", "A4.txt")

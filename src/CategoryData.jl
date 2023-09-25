@@ -13,7 +13,7 @@ using SparseArrayKit
 
 export FusionRing, FusionCategory, BraidedCategory
 export FR, UFC, PMFC
-export E6
+export RepA4, E6
 export Object
 export multiplicity, rank
 

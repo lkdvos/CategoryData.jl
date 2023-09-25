@@ -1,3 +1,6 @@
+# Utility
+# -------
+
 function subscript(i::Integer)
     return i < 0 ? error("$i is negative") :
            string(Iterators.reverse('₀' + d for d in digits(i))...)
@@ -13,8 +16,55 @@ function superscript(i::Integer)
     end
 end
 
+"""
+    macro objectnames(category, names)
+
+Defines a category name and its objects, along with an export statement.
+
+# Examples
+
+```julia
+@objectnames PMFC{2,1,0,1,0,0} 0 1 # without category name
+@objectnames Fib = UFC{2,1,0,2,0} I τ # with category name
+"""
+macro objectnames(categoryname, names...)
+    if Meta.isexpr(categoryname, :(=), 2)
+        name = categoryname.args[1]
+        category = categoryname.args[2]
+        constex = quote
+            const $name = $category
+            export $name
+        end
+    else
+        name = categoryname
+        category = categoryname
+        constex = :()
+    end
+
+    ex = quote
+        $constex
+        function Object{$name}(a::Symbol)
+            id = findfirst(==(a), $names)
+            isnothing(id) && throw(ArgumentError("Unknown $(string($name)) object $a."))
+            return Object{$name}(id)
+        end
+
+        function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
+            symbol = $names[ψ.id]
+            if get(io, :typeinfo, Any) !== Object{$name}
+                print(io, symbol, " ∈ 𝒪($(string($name)))")
+            else
+                print(io, symbol)
+            end
+        end
+    end
+
+    return esc(ex)
+end
+
 # Show and friends
 # ----------------
+
 function Base.show(io::IO, ::MIME"text/plain", ::Type{FR{R,M,N,I}}) where {R,M,N,I}
     if get(io, :compact, true)
         if M == 1
@@ -59,7 +109,7 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
     if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, ψ.id, "∈ 𝒪(", FR, ")")
+        print(io, ψ.id, " ∈ 𝒪(", FR, ")")
     else
         print(io, ψ.id)
     end

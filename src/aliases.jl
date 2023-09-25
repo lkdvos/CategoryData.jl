@@ -1,5 +1,4 @@
 const Z2 = PMFC{2,1,0,1,0,0}
-const Ising = PMFC{3,1,0,1,1,3}
 const RepS3 = PMFC{3,1,0,2,0,0}
 const Z3 = PMFC{3,1,2,1,0,0}
 const Z2xZ2 = PMFC{4,1,0,1,0,0}
@@ -11,7 +10,9 @@ const RepS4 = PMFC{5,1,0,6,1,0}
 const Z5 = PMFC{5,1,4,1,0,0}
 const Z6 = PMFC{6,1,4,1,0,0}
 
-const H1 = UFC{4,2,0,1,0}
-const Fib = UFC{2,1,0,2,0}
 const H2 = UFC{6,1,2,8,2}
 const H3 = UFC{6,1,2,8,3}
+
+@objectnames Fib = UFC{2,1,0,2,0} I τ
+@objectnames Ising = PMFC{3,1,0,1,1,3} I σ ψ
+@objectnames H1 = UFC{4,2,0,1,0} I μ η ν

@@ -1,4 +1,4 @@
-const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.1.0", "data")
+const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.1.1", "data")
 
 function list_fusionrings()
     foldername = joinpath(artifact_path, "Nsymbols")
@@ -245,5 +245,63 @@ end
 
             return $(R_array)[(a.id, b.id, c.id)]
         end
+    end
+end
+
+# fusiontensors
+# -------------
+
+const fusionformat = r"(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<m1>\d+) (?<m2>\d+) (?<m3>\d+) (?<μ>\d+) (?<re>-?\d+(\.\d+)?) (?<im>-?\d+(\.\d+)?)"
+
+function parse_fusiontensor(line)
+    m = match(fusionformat, line)
+    local labels, val
+    try
+        labels = parse.(Int, (m[:a], m[:b], m[:c], m[:m1], m[:m2], m[:m3], m[:μ]))
+        val = complex(parse.(Float64, (m[:re], m[:im]))...)
+    catch
+        throw(Meta.ParseError("invalid fusiontensor pattern: $line"))
+    end
+    return labels..., val
+end
+
+function extract_fusiontensor(::Type{F}) where {F<:BraidedCategory}
+    filename = fusiontensor_artifact(F)
+
+    fusiontensor_dict = Dict{Tuple{Int,Int,Int},SparseArray{ComplexF64,4}}()
+    for line in eachline(filename)
+        a, b, c, m1, m2, m3, μ, val = parse_fusiontensor(line)
+
+        μ <= multiplicity(F) ||
+            throw(DomainError("multiplicity of fusiontensor should be less than or equal to that of the category"))
+
+        if !Base.haskey(fusiontensor_dict, (a, b, c))
+            fusiontensor_dict[a, b, c] = generate_fusiontensor_array(F, a, b, c)
+        end
+        fusiontensor_dict[a, b, c][m1, m2, m3, μ] = val
+    end
+    return fusiontensor_dict
+end
+
+function generate_fusiontensor_array(::Type{F}, a::Int, b::Int,
+                                     c::Int) where {F<:BraidedCategory}
+    a, b, c = Object{F}(a), Object{F}(b), Object{F}(c)
+    da = dim(a)
+    db = dim(b)
+    dc = dim(c)
+    N = Nsymbol(a, b, c)
+    return SparseArray{ComplexF64,4}(undef, (da, db, dc, N))
+end
+
+@generated function TensorKit.fusiontensor(a::Object{F}, b::Object{F},
+                                           c::Object{F}) where {F<:BraidedCategory}
+    Fdict = extract_fusiontensor(F)
+    return quote
+        da = dim(a)
+        db = dim(b)
+        dc = dim(c)
+        N = Nsymbol(a, b, c)
+        N == 0 && return SparseArray{ComplexF64,4}(undef, (da, db, dc, N))
+        return $(Fdict)[(a.id, b.id, c.id)]
     end
 end

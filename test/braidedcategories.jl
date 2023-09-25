@@ -21,4 +21,19 @@
             @test hexagon_equation(a, b, c; atol=1e-12, rtol=1e-12)
         end
     end
+
+    if hasfusiontensor(I)
+        @testset "Sector $Istr: fusion tensor and R-move" begin
+            for a in smallset(I), b in smallset(I)
+                for c in ⊗(a, b)
+                    X1 = permutedims(fusiontensor(a, b, c), (2, 1, 3, 4))
+                    X2 = fusiontensor(b, a, c)
+                    l = dim(a) * dim(b) * dim(c)
+                    R = LinearAlgebra.transpose(Rsymbol(a, b, c))
+                    sz = (l, convert(Int, Nsymbol(a, b, c)))
+                    @test reshape(X1, sz) ≈ reshape(X2, sz) * R
+                end
+            end
+        end
+    end
 end

@@ -41,3 +41,7 @@ function Base.conj(a::Object{F}) where {F}
                                    collect(values(typeof(a)))))
     end
 end
+
+# must be integer for fusiontensor
+TensorKit.dim(a::Object{RepA4}) = a.id == 4 ? 3 : 1
+TensorKit.BraidingStyle(::Type{Object{RepA4}}) = TensorKit.Bosonic()

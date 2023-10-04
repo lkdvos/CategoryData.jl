@@ -13,9 +13,9 @@ using SparseArrayKit
 
 export FusionRing, FusionCategory, BraidedCategory
 export FR, UFC, PMFC
-export RepA4, E6
+export RepA4, E6, Fib, Ising
 export Object
-export multiplicity, rank
+export multiplicity, rank, algebraic_structure, selfduality
 
 include("categories.jl")
 include("objects.jl")

@@ -19,7 +19,7 @@ end
 """
     macro objectnames(category, names)
 
-Defines a category name and its objects, along with an export statement.
+Defines a category name and its objects, along with pretty printing functionality.
 
 # Examples
 
@@ -31,9 +31,24 @@ macro objectnames(categoryname, names...)
     if Meta.isexpr(categoryname, :(=), 2)
         name = categoryname.args[1]
         category = categoryname.args[2]
-        constex = quote
-            const $name = $category
-            export $name
+        name_str = string(name)
+        constex = if __module__ == CategoryData
+            quote
+                const $name = $category
+                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
+                    return print(io, $name_str)
+                end
+            end
+        else
+            quote
+                const $name = $category
+                function Base.show(io::IO, ::Type{$name})
+                    return print(io, $name_str)
+                end
+                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
+                    return print(io, $name_str)
+                end
+            end
         end
     else
         name = categoryname
@@ -45,7 +60,7 @@ macro objectnames(categoryname, names...)
         $constex
         function Object{$name}(a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $(string($name)) object $a."))
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) object $a."))
             return Object{$name}(id)
         end
 

@@ -6,6 +6,10 @@ struct Object{F} <: Sector where {F<:FusionRing}
     end
 end
 
+function algebraic_structure(::Union{Type{Object{F}}, Object{F}}) where {F}
+    return F
+end
+
 Base.isless(a::Object{F}, b::Object{F}) where {F} = isless(a.id, b.id)
 Base.hash(a::Object{F}, h::UInt) where {F} = hash(a.id, h)
 Base.convert(::Type{F}, d::Integer) where {F<:Object} = F(d)

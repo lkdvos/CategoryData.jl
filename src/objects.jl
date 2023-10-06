@@ -6,7 +6,7 @@ struct Object{F} <: Sector where {F<:FusionRing}
     end
 end
 
-function algebraic_structure(::Union{Type{Object{F}}, Object{F}}) where {F}
+function algebraic_structure(::Union{Type{Object{F}},Object{F}}) where {F}
     return F
 end
 

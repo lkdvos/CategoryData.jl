@@ -1,7 +1,7 @@
 name = "CategoryData"
 uuid = "8fccf25a-f50e-468c-8fba-3cb130506274"
 authors = ["Lukas Devos", "Jacob Bridgeman"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
@@ -13,8 +13,12 @@ Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 TensorKit = "07d1fe3e-3e46-537d-9eac-e9e13d0d4cec"
 
 [compat]
+Downloads = "1"
 Inflate = "0.1"
+Pkg = "1"
+SHA = "0.7, 1"
 SparseArrayKit = "0.2, 0.3"
+Tar = "1"
 TensorKit = "0.11, 0.12"
 julia = "1.6"
 

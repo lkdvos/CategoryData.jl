@@ -1,3 +1,8 @@
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/lkdvos/CategoryData.jl/blob/main/docs/src/assets/logo-dark.svg">
+    <img alt="CategoryData.jl logo" src="https://github.com/lkdvos/CategoryData.jl/blob/main/docs/src/assets/logo.svg" width="150">
+</picture>
+
 # CategoryData
 
 [TensorKit.jl](https://github.com/Jutho/TensorKit.jl) extension for low rank unitary fusion categories, using [smallRankUnitaryFusionData](https://github.com/JCBridgeman/smallRankUnitaryFusionData)

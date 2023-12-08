@@ -5,15 +5,14 @@
 
 # CategoryData
 
-[TensorKit.jl](https://github.com/Jutho/TensorKit.jl) extension for low rank unitary fusion categories, using [smallRankUnitaryFusionData](https://github.com/JCBridgeman/smallRankUnitaryFusionData)
+[TensorKit.jl](https://github.com/Jutho/TensorKit.jl) extension for low rank unitary fusion categories, using [smallRankUnitaryFusionData](https://github.com/JCBridgeman/smallRankUnitaryFusionData) and the [AnyonWiki](https://anyonwiki.github.io/)
 
 [![Build Status](https://github.com/lkdvos/CategoryData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/lkdvos/CategoryData.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/lkdvos/CategoryData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/lkdvos/CategoryData.jl)
 
-This package provides TensorKit's sectortypes for all objects of multiplicity-free (braided)
+This package currently provides TensorKit's sectortypes for all objects of multiplicity-free (braided)
 fusion categories up to rank 6. The full list, along with the naming convention can be found
-in the
-[Anyon Wiki](http://www.thphys.nuim.ie/AnyonWiki/index.php/List_of_small_multiplicity-free_fusion_rings).
+[here](https://anyonwiki.github.io/pages/Lists/losmffc.html).
 
 Additionally, some specific categories with multiplicities have also been added.
 

@@ -253,6 +253,11 @@ end
 
 const fusionformat = r"(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<m1>\d+) (?<m2>\d+) (?<m3>\d+) (?<μ>\d+) (?<re>-?\d+(\.\d+)?) (?<im>-?\d+(\.\d+)?)"
 
+function fusiontensor_artifact(::Type{F}) where {F<:PMFC}
+    return joinpath(artifact_path, "fusiontensors",
+                    "FR_$(rank(F))_$(multiplicity(F))_$(selfduality(F))_$(ring_index(F))_$(category_index(F))_$(braid_index(F)).txt")
+end
+
 function parse_fusiontensor(line)
     m = match(fusionformat, line)
     local labels, val

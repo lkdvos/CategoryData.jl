@@ -82,8 +82,10 @@ end
 
 function extract_Nsymbol(::Type{F}) where {F<:FusionRing}
     R = rank(F)
+    filename = N_artifact(F)
+    isfile(filename) || throw(LoadError(filename, 0, "Nsymbol file not found for $F"))
     N_array = SparseArray{Int}(undef, (R, R, R))
-    for line in eachline(N_artifact(F))
+    for line in eachline(filename)
         a, b, c, N = parse_Nsymbol(line)
         N_array[a, b, c] = N
     end
@@ -92,7 +94,16 @@ end
 
 @generated function TensorKit.Nsymbol(a::Object{F}, b::Object{F},
                                       c::Object{F}) where {F<:FusionRing}
-    N_array = extract_Nsymbol(F)
+    local N_array
+    try
+        N_array = extract_Nsymbol(F)
+    catch e
+        if e isa LoadError
+            return :(throw(MethodError(TensorKit.Nsymbol, (a, b, c))))
+        else
+            rethrow(e)
+        end
+    end
     return :(getindex($(N_array), a.id, b.id, c.id))
 end
 
@@ -124,6 +135,8 @@ function extract_Fsymbol(::Type{F}) where {F<:FusionCategory}
     R = rank(F)
     M = multiplicity(F)
     filename = F_artifact(F)
+    isfile(filename) || throw(LoadError(filename, 0, "Fsymbol file not found for $F"))
+
     if M == 1
         F_array = SparseArray{ComplexF64}(undef, (R, R, R, R, R, R))
         for line in eachline(filename)
@@ -159,7 +172,16 @@ end
 @generated function TensorKit.Fsymbol(a::Object{F}, b::Object{F}, c::Object{F},
                                       d::Object{F}, e::Object{F},
                                       f::Object{F}) where {F<:FusionCategory}
-    F_array = extract_Fsymbol(F)
+    local F_array
+    try
+        F_array = extract_Fsymbol(F)
+    catch e
+        if e isa LoadError
+            return :(throw(MethodError(TensorKit.Fsymbol, (a, b, c, d, e, f))))
+        else
+            rethrow(e)
+        end
+    end
     if TensorKit.FusionStyle(Object{F}) isa TensorKit.MultiplicityFreeFusion
         return :(getindex($(F_array), a.id, b.id, c.id, d.id, e.id, f.id))
     else
@@ -202,6 +224,8 @@ end
 function extract_Rsymbol(::Type{F}) where {F<:BraidedCategory}
     R = rank(F)
     filename = R_artifact(F)
+    isfile(filename) || throw(LoadError(filename, 0, "Rsymbol file not found for $F"))
+
     if multiplicity(F) == 1
         R_array = SparseArray{ComplexF64}(undef, (R, R, R))
         for line in eachline(filename)
@@ -232,7 +256,17 @@ end
 
 @generated function TensorKit.Rsymbol(a::Object{F}, b::Object{F},
                                       c::Object{F}) where {F<:BraidedCategory}
-    R_array = extract_Rsymbol(F)
+    local R_array
+    try
+        R_array = extract_Rsymbol(F)
+    catch e
+        if e isa LoadError
+            return :(throw(MethodError(TensorKit.rsymbol, (a, b, c))))
+        else
+            rethrow(e)
+        end
+    end
+    
     if TensorKit.FusionStyle(Object{F}) isa TensorKit.MultiplicityFreeFusion
         return :(getindex($(R_array), a.id, b.id, c.id))
     else
@@ -272,7 +306,8 @@ end
 
 function extract_fusiontensor(::Type{F}) where {F<:BraidedCategory}
     filename = fusiontensor_artifact(F)
-
+    isfile(filename) || throw(LoadError(filename, 0, "fusiontensor file not found for $F"))
+    
     fusiontensor_dict = Dict{Tuple{Int,Int,Int},SparseArray{ComplexF64,4}}()
     for line in eachline(filename)
         a, b, c, m1, m2, m3, μ, val = parse_fusiontensor(line)
@@ -300,7 +335,17 @@ end
 
 @generated function TensorKit.fusiontensor(a::Object{F}, b::Object{F},
                                            c::Object{F}) where {F<:BraidedCategory}
-    Fdict = extract_fusiontensor(F)
+    local Fdict
+    try
+        Fdict = extract_fusiontensor(F)
+    catch e
+        if e isa LoadError
+            return :(throw(MethodError(TensorKit.fusiontensor, (a, b, c))))
+        else
+            rethrow(e)
+        end
+    end
+
     return quote
         da = dim(a)
         db = dim(b)

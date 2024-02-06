@@ -266,7 +266,7 @@ end
             rethrow(e)
         end
     end
-    
+
     if TensorKit.FusionStyle(Object{F}) isa TensorKit.MultiplicityFreeFusion
         return :(getindex($(R_array), a.id, b.id, c.id))
     else
@@ -307,7 +307,7 @@ end
 function extract_fusiontensor(::Type{F}) where {F<:BraidedCategory}
     filename = fusiontensor_artifact(F)
     isfile(filename) || throw(LoadError(filename, 0, "fusiontensor file not found for $F"))
-    
+
     fusiontensor_dict = Dict{Tuple{Int,Int,Int},SparseArray{ComplexF64,4}}()
     for line in eachline(filename)
         a, b, c, m1, m2, m3, μ, val = parse_fusiontensor(line)

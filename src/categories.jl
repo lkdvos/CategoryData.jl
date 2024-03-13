@@ -54,6 +54,6 @@ struct ZVecD4 <: BraidedCategory end
 rank(::Type{ZVecD4}) = 22
 multiplicity(::Type{ZVecD4}) = 1
 selfduality(::Type{ZVecD4}) = 22
-N_artifact(::Type{ZVecD4}) = joinpath("./data/", "Nsymbols", "ZVecD4.txt")
-F_artifact(::Type{ZVecD4}) = joinpath("./data/", "Fsymbols", "ZVecD4.txt")
-R_artifact(::Type{ZVecD4}) = joinpath("./data/", "Rsymbols", "ZVecD4.txt")
+N_artifact(::Type{ZVecD4}) = joinpath(artifact_path, "Nsymbols", "ZVecD4.txt")
+F_artifact(::Type{ZVecD4}) = joinpath(artifact_path, "Fsymbols", "ZVecD4.txt")
+R_artifact(::Type{ZVecD4}) = joinpath(artifact_path, "Rsymbols", "ZVecD4.txt")

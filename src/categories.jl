@@ -49,3 +49,11 @@ selfduality(::Type{ZVecS3}) = 8
 N_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Nsymbols", "ZVecS3.txt")
 F_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Fsymbols", "ZVecS3.txt")
 R_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Rsymbols", "ZVecS3.txt")
+
+struct ZVecD4 <: BraidedCategory end
+rank(::Type{ZVecD4}) = 22
+multiplicity(::Type{ZVecD4}) = 1
+selfduality(::Type{ZVecD4}) = 22
+N_artifact(::Type{ZVecD4}) = joinpath("./data/", "Nsymbols", "ZVecD4.txt")
+F_artifact(::Type{ZVecD4}) = joinpath("./data/", "Fsymbols", "ZVecD4.txt")
+R_artifact(::Type{ZVecD4}) = joinpath("./data/", "Rsymbols", "ZVecD4.txt")

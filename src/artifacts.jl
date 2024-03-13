@@ -1,7 +1,8 @@
-const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.1.1", "data")
+const artifact_path = "./data/"
 
 function list_fusionrings()
     foldername = joinpath(artifact_path, "Nsymbols")
+    print(foldername)
     rings = Vector{Type{<:FusionRing}}()
     for file in readdir(foldername)
         m = match(r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+).txt", file)

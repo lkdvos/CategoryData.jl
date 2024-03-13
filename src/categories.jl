@@ -41,3 +41,11 @@ N_artifact(::Type{RepA4}) = joinpath(artifact_path, "Nsymbols", "RepA4.txt")
 F_artifact(::Type{RepA4}) = joinpath(artifact_path, "Fsymbols", "RepA4.txt")
 R_artifact(::Type{RepA4}) = joinpath(artifact_path, "Rsymbols", "RepA4.txt")
 fusiontensor_artifact(::Type{RepA4}) = joinpath(artifact_path, "fusiontensors", "RepA4.txt")
+
+struct ZVecS3 <: BraidedCategory end
+rank(::Type{ZVecS3}) = 8
+multiplicity(::Type{ZVecS3}) = 1
+selfduality(::Type{ZVecS3}) = 8
+N_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Nsymbols", "ZVecS3.txt")
+F_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Fsymbols", "ZVecS3.txt")
+R_artifact(::Type{ZVecS3}) = joinpath(artifact_path, "Rsymbols", "ZVecS3.txt")

@@ -129,3 +129,61 @@ function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:Fusion
         print(io, ψ.id)
     end
 end
+
+# Grouplike things
+# ----------------
+abstract type D{N} <: TensorKit.Group end
+
+const D₃ = D{3}
+const D₄ = D{4}
+const D₅ = D{5}
+const D₆ = D{6}
+
+abstract type S{N} <: TensorKit.Group end
+
+const S₃ = S{3} # == D₃
+const S₄ = S{4}
+
+function Base.getindex(::TensorKit.IrrepTable, G::Type{Union{D,S}})
+    return Object{Rep[G]}
+end
+function Base.getindex(::TensorKit.RepTable, ::Type{D{N}}) where {N}
+    return N == 3 ? RepD3 :
+           N == 4 ? RepD4 :
+           N == 5 ? RepD5 :
+           N == 6 ? RepD7 :
+           throw(ArgumentError("Rep[D{$N}] not implemented."))
+end
+
+function Base.getindex(::TensorKit.RepTable, ::Type{S{N}}) where {N}
+    return N == 3 ? RepS3 :
+           N == 4 ? RepS4 :
+           throw(ArgumentError("Rep[S{$N}] not implemented."))
+end
+
+struct VecTable end
+const Vec = VecTable()
+
+function Base.getindex(::VecTable, ::Type{D{N}}) where {N}
+    return N == 3 ? VecD3 :
+           throw(ArgumentError("Vec[D{$N}] not implemented."))
+end
+
+function Base.getindex(::VecTable, ::Type{S{N}}) where {N}
+    return N == 3 ? VecS3 :
+           throw(ArgumentError("Vec[S{$N}] not implemented."))
+end
+
+
+# Centers
+# -------
+
+struct CenterTable end
+
+"""
+    const Ƶ
+
+A constant of singleton type used as `Ƶ[C]` with `C<:FusionCategory` to construct or obtain
+the concrete type of the center of the category `C`.
+"""
+const Ƶ = CenterTable()

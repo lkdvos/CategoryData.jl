@@ -144,36 +144,21 @@ abstract type S{N} <: TensorKit.Group end
 const S₃ = S{3} # == D₃
 const S₄ = S{4}
 
-function Base.getindex(::TensorKit.IrrepTable, G::Type{Union{D,S}})
-    return Object{Rep[G]}
-end
-function Base.getindex(::TensorKit.RepTable, ::Type{D{N}}) where {N}
-    return N == 3 ? RepD3 :
-           N == 4 ? RepD4 :
-           N == 5 ? RepD5 :
-           N == 6 ? RepD7 :
-           throw(ArgumentError("Rep[D{$N}] not implemented."))
+function Base.getindex(::TensorKit.IrrepTable, G::Type{D{N}}) where {N}
+    𝒞 = N == 3 ? RepD3 :
+        N == 4 ? RepD4 :
+        N == 5 ? RepD5 :
+        N == 6 ? RepD7 :
+        throw(ArgumentError("Rep[D{$N}] not implemented."))
+    return Object{𝒞}
 end
 
-function Base.getindex(::TensorKit.RepTable, ::Type{S{N}}) where {N}
-    return N == 3 ? RepS3 :
-           N == 4 ? RepS4 :
-           throw(ArgumentError("Rep[S{$N}] not implemented."))
+function Base.getindex(::TensorKit.IrrepTable, G::Type{S{N}}) where {N}
+    𝒞 = N == 3 ? RepS3 :
+        N == 4 ? RepS4 :
+        throw(ArgumentError("Rep[S{$N}] not implemented."))
+    return Object{𝒞}
 end
-
-struct VecTable end
-const Vec = VecTable()
-
-function Base.getindex(::VecTable, ::Type{D{N}}) where {N}
-    return N == 3 ? VecD3 :
-           throw(ArgumentError("Vec[D{$N}] not implemented."))
-end
-
-function Base.getindex(::VecTable, ::Type{S{N}}) where {N}
-    return N == 3 ? VecS3 :
-           throw(ArgumentError("Vec[S{$N}] not implemented."))
-end
-
 
 # Centers
 # -------

@@ -16,6 +16,7 @@ export FR, UFC, PMFC
 export RepA4, E6, Fib, Ising
 export Object
 export multiplicity, rank, algebraic_structure, selfduality
+export S, D, Ƶ
 
 include("categories.jl")
 include("objects.jl")

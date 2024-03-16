@@ -11,7 +11,7 @@ const Z2xZ2 = PMFC{4,1,0,1,0,0}
 const RepD3 = PMFC{3,1,0,2,0,0}
 const RepD4 = PMFC{5,1,0,1,3,0}
 const RepD5 = PMFC{4,1,0,3,0,0}
-# TODO: const RepD6 = ?
+const RepD6 = PMFC{6,1,0,2,0,0}
 const RepD7 = PMFC{5,1,0,4,0,0}
 
 # Vec[Dₙ]

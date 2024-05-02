@@ -1,4 +1,4 @@
-const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.1.2", "data")
+const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.1.3", "data")
 
 function list_fusionrings()
     foldername = joinpath(artifact_path, "Nsymbols")

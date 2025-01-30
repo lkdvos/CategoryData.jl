@@ -22,17 +22,17 @@ end
 function Base.getindex(S::SectorValues{<:Object{F}}, i) where {F}
     return 0 < i <= rank(F) ? Object{F}(i) : throw(BoundsError(S, i))
 end
-TensorKit.findindex(::SectorValues{I}, c::I) where {I<:Object} = c.id
+TensorKitSectors.findindex(::SectorValues{I}, c::I) where {I<:Object} = c.id
 
 # some fallback styles - should probably be overwritten for specific categories
 
-function TensorKit.FusionStyle(::Type{<:Object{F}}) where {F}
+function TensorKitSectors.FusionStyle(::Type{<:Object{F}}) where {F}
     return multiplicity(F) == 1 ? SimpleFusion() : GenericFusion()
 end
-TensorKit.BraidingStyle(::Type{<:Object{<:BraidedCategory}}) = Anyonic()
-TensorKit.BraidingStyle(::Type{<:Object{<:FusionRing}}) = NoBraiding()
+TensorKitSectors.BraidingStyle(::Type{<:Object{<:BraidedCategory}}) = Anyonic()
+TensorKitSectors.BraidingStyle(::Type{<:Object{<:FusionRing}}) = NoBraiding()
 
-function TensorKit.:⊗(a::I, b::I) where {I<:Object}
+function TensorKitSectors.:⊗(a::I, b::I) where {I<:Object}
     return Iterators.filter(c -> Nsymbol(a, b, c) > 0, values(I))
 end
 
@@ -47,5 +47,5 @@ function Base.conj(a::Object{F}) where {F}
 end
 
 # must be integer for fusiontensor
-TensorKit.dim(a::Object{RepA4}) = a.id == 4 ? 3 : 1
-TensorKit.BraidingStyle(::Type{Object{RepA4}}) = TensorKit.Bosonic()
+TensorKitSectors.dim(a::Object{RepA4}) = a.id == 4 ? 3 : 1
+TensorKitSectors.BraidingStyle(::Type{Object{RepA4}}) = TensorKitSectors.Bosonic()

@@ -261,7 +261,7 @@ end
         R_array = extract_Rsymbol(F)
     catch e
         if e isa LoadError
-            return :(throw(MethodError(TensorKitSectors.rsymbol, (a, b, c))))
+            return :(throw(MethodError(TensorKitSectors.Rsymbol, (a, b, c))))
         else
             rethrow(e)
         end

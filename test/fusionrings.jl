@@ -41,7 +41,8 @@
         elseif hasmethod(Base.getindex, Tuple{typeof(values(I)),Int})
             @test (@constinferred TensorKitSectors.findindex(values(I), one(I))) == 1
             for s in smallset(I)
-                @test (@constinferred values(I)[TensorKitSectors.findindex(values(I), s)]) == s
+                @test (@constinferred values(I)[TensorKitSectors.findindex(values(I), s)]) ==
+                      s
             end
         end
     end

@@ -93,7 +93,7 @@ function extract_Nsymbol(::Type{F}) where {F<:FusionRing}
 end
 
 @generated function TensorKitSectors.Nsymbol(a::Object{F}, b::Object{F},
-                                      c::Object{F}) where {F<:FusionRing}
+                                             c::Object{F}) where {F<:FusionRing}
     local N_array
     try
         N_array = extract_Nsymbol(F)
@@ -170,8 +170,8 @@ function generate_Farray(::Type{F}, a::Int, b::Int, c::Int, d::Int, e::Int,
 end
 
 @generated function TensorKitSectors.Fsymbol(a::Object{F}, b::Object{F}, c::Object{F},
-                                      d::Object{F}, e::Object{F},
-                                      f::Object{F}) where {F<:FusionCategory}
+                                             d::Object{F}, e::Object{F},
+                                             f::Object{F}) where {F<:FusionCategory}
     local F_array
     try
         F_array = extract_Fsymbol(F)
@@ -255,7 +255,7 @@ function generate_Rarray(::Type{F}, a::Int, b::Int, c::Int) where {F<:BraidedCat
 end
 
 @generated function TensorKitSectors.Rsymbol(a::Object{F}, b::Object{F},
-                                      c::Object{F}) where {F<:BraidedCategory}
+                                             c::Object{F}) where {F<:BraidedCategory}
     local R_array
     try
         R_array = extract_Rsymbol(F)
@@ -334,7 +334,7 @@ function generate_fusiontensor_array(::Type{F}, a::Int, b::Int,
 end
 
 @generated function TensorKitSectors.fusiontensor(a::Object{F}, b::Object{F},
-                                           c::Object{F}) where {F<:BraidedCategory}
+                                                  c::Object{F}) where {F<:BraidedCategory}
     local Fdict
     try
         Fdict = extract_fusiontensor(F)

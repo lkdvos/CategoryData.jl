@@ -4,6 +4,7 @@ using TensorKitSectors
 using TensorKitSectors: fusiontensor, pentagon_equation, hexagon_equation
 using Base.Iterators: product
 using LinearAlgebra: LinearAlgebra
+using TensorOperations: @tensor
 
 Random.seed!(1234)
 

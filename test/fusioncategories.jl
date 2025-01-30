@@ -1,11 +1,11 @@
 @testset verbose = true "$(F)" for F in CategoryData.list_fusioncategories()
     I = Object{F}
-    Istr = TensorKit.type_repr(I)
+    Istr = TensorKitSectors.type_repr(I)
 
     @testset "Sector $Istr: Basic properties" begin
         s = (randsector(I), randsector(I), randsector(I))
         @test eval(Meta.parse(sprint(show, I))) == I
-        @test eval(Meta.parse(TensorKit.type_repr(I))) == I
+        @test eval(Meta.parse(TensorKitSectors.type_repr(I))) == I
         @test eval(Meta.parse(sprint(show, s[1]))) == s[1]
         @test @constinferred(hash(s[1])) == hash(deepcopy(s[1]))
         @test @constinferred(one(s[1])) == @constinferred(one(I))

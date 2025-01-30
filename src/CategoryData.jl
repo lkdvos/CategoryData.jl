@@ -5,9 +5,9 @@ using Pkg.Artifacts
 
 using Tar, Inflate, SHA
 
-using TensorKit
-using TensorKit: SectorValues
-using TensorKit: SimpleFusion, GenericFusion, Anyonic, NoBraiding
+using TensorKitSectors
+using TensorKitSectors: SectorValues
+using TensorKitSectors: SimpleFusion, GenericFusion, Anyonic, NoBraiding
 
 using SparseArrayKit
 

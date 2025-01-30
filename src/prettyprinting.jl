@@ -132,19 +132,19 @@ end
 
 # Grouplike things
 # ----------------
-abstract type D{N} <: TensorKit.Group end
+abstract type D{N} <: TensorKitSectors.Group end
 
 const D₃ = D{3}
 const D₄ = D{4}
 const D₅ = D{5}
 const D₆ = D{6}
 
-abstract type S{N} <: TensorKit.Group end
+abstract type S{N} <: TensorKitSectors.Group end
 
 const S₃ = S{3} # == D₃
 const S₄ = S{4}
 
-function Base.getindex(::TensorKit.IrrepTable, G::Type{D{N}}) where {N}
+function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{D{N}}) where {N}
     𝒞 = N == 3 ? RepD3 :
         N == 4 ? RepD4 :
         N == 5 ? RepD5 :
@@ -153,7 +153,7 @@ function Base.getindex(::TensorKit.IrrepTable, G::Type{D{N}}) where {N}
     return Object{𝒞}
 end
 
-function Base.getindex(::TensorKit.IrrepTable, G::Type{S{N}}) where {N}
+function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{S{N}}) where {N}
     𝒞 = N == 3 ? RepS3 :
         N == 4 ? RepS4 :
         throw(ArgumentError("Rep[S{$N}] not implemented."))

@@ -92,14 +92,14 @@ function extract_Nsymbol(::Type{F}) where {F<:FusionRing}
     return N_array
 end
 
-@generated function TensorKit.Nsymbol(a::Object{F}, b::Object{F},
-                                      c::Object{F}) where {F<:FusionRing}
+@generated function TensorKitSectors.Nsymbol(a::Object{F}, b::Object{F},
+                                             c::Object{F}) where {F<:FusionRing}
     local N_array
     try
         N_array = extract_Nsymbol(F)
     catch e
         if e isa LoadError
-            return :(throw(MethodError(TensorKit.Nsymbol, (a, b, c))))
+            return :(throw(MethodError(TensorKitSectors.Nsymbol, (a, b, c))))
         else
             rethrow(e)
         end
@@ -169,20 +169,20 @@ function generate_Farray(::Type{F}, a::Int, b::Int, c::Int, d::Int, e::Int,
     return SparseArray{ComplexF64,4}(undef, (N1, N2, N3, N4))
 end
 
-@generated function TensorKit.Fsymbol(a::Object{F}, b::Object{F}, c::Object{F},
-                                      d::Object{F}, e::Object{F},
-                                      f::Object{F}) where {F<:FusionCategory}
+@generated function TensorKitSectors.Fsymbol(a::Object{F}, b::Object{F}, c::Object{F},
+                                             d::Object{F}, e::Object{F},
+                                             f::Object{F}) where {F<:FusionCategory}
     local F_array
     try
         F_array = extract_Fsymbol(F)
     catch e
         if e isa LoadError
-            return :(throw(MethodError(TensorKit.Fsymbol, (a, b, c, d, e, f))))
+            return :(throw(MethodError(TensorKitSectors.Fsymbol, (a, b, c, d, e, f))))
         else
             rethrow(e)
         end
     end
-    if TensorKit.FusionStyle(Object{F}) isa TensorKit.MultiplicityFreeFusion
+    if TensorKitSectors.FusionStyle(Object{F}) isa TensorKitSectors.MultiplicityFreeFusion
         return :(getindex($(F_array), a.id, b.id, c.id, d.id, e.id, f.id))
     else
         return quote
@@ -254,20 +254,20 @@ function generate_Rarray(::Type{F}, a::Int, b::Int, c::Int) where {F<:BraidedCat
     return SparseArray{ComplexF64,2}(undef, (N1, N2))
 end
 
-@generated function TensorKit.Rsymbol(a::Object{F}, b::Object{F},
-                                      c::Object{F}) where {F<:BraidedCategory}
+@generated function TensorKitSectors.Rsymbol(a::Object{F}, b::Object{F},
+                                             c::Object{F}) where {F<:BraidedCategory}
     local R_array
     try
         R_array = extract_Rsymbol(F)
     catch e
         if e isa LoadError
-            return :(throw(MethodError(TensorKit.rsymbol, (a, b, c))))
+            return :(throw(MethodError(TensorKitSectors.Rsymbol, (a, b, c))))
         else
             rethrow(e)
         end
     end
 
-    if TensorKit.FusionStyle(Object{F}) isa TensorKit.MultiplicityFreeFusion
+    if TensorKitSectors.FusionStyle(Object{F}) isa TensorKitSectors.MultiplicityFreeFusion
         return :(getindex($(R_array), a.id, b.id, c.id))
     else
         return quote
@@ -333,14 +333,14 @@ function generate_fusiontensor_array(::Type{F}, a::Int, b::Int,
     return SparseArray{ComplexF64,4}(undef, (da, db, dc, N))
 end
 
-@generated function TensorKit.fusiontensor(a::Object{F}, b::Object{F},
-                                           c::Object{F}) where {F<:BraidedCategory}
+@generated function TensorKitSectors.fusiontensor(a::Object{F}, b::Object{F},
+                                                  c::Object{F}) where {F<:BraidedCategory}
     local Fdict
     try
         Fdict = extract_fusiontensor(F)
     catch e
         if e isa LoadError
-            return :(throw(MethodError(TensorKit.fusiontensor, (a, b, c))))
+            return :(throw(MethodError(TensorKitSectors.fusiontensor, (a, b, c))))
         else
             rethrow(e)
         end

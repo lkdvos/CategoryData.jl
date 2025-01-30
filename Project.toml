@@ -11,7 +11,6 @@ SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 SparseArrayKit = "a9a3c162-d163-4c15-8926-b8794fbefed2"
 Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 TensorKitSectors = "13a9c161-d5da-41f0-bcbd-e1a08ae0647f"
-TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
 Downloads = "1"
@@ -20,6 +19,7 @@ Pkg = "1"
 SHA = "0.7, 1"
 SparseArrayKit = "0.4"
 Tar = "1"
+TensorOperations = "5"
 TensorKitSectors = "0.1"
 TestExtras = "0.2"
 julia = "1.10"
@@ -29,6 +29,7 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestExtras = "5ed8adda-3752-4e41-b88a-e8b09835ee3a"
+TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [targets]
-test = ["Test", "TestExtras", "LinearAlgebra", "Random"]
+test = ["Test", "TestExtras", "LinearAlgebra", "Random", "TensorOperations"]

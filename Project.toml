@@ -11,6 +11,7 @@ SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 SparseArrayKit = "a9a3c162-d163-4c15-8926-b8794fbefed2"
 Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 TensorKitSectors = "13a9c161-d5da-41f0-bcbd-e1a08ae0647f"
+TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
 Downloads = "1"

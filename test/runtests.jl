@@ -1,7 +1,7 @@
 using CategoryData
 using Test, TestExtras, Random
-using TensorKit
-using TensorKit: fusiontensor, pentagon_equation, hexagon_equation
+using TensorKitSectors
+using TensorKitSectors: fusiontensor, pentagon_equation, hexagon_equation
 using Base.Iterators: product
 using LinearAlgebra: LinearAlgebra
 

@@ -1,7 +1,7 @@
 name = "CategoryData"
 uuid = "8fccf25a-f50e-468c-8fba-3cb130506274"
 authors = ["Lukas Devos", "Jacob Bridgeman"]
-version = "0.3.0"
+version = "0.3.1"
 
 [deps]
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"

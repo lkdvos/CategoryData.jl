@@ -19,7 +19,7 @@ Base.length(::SectorValues{<:Object{F}}) where {F} = rank(F)
 function Base.iterate(::SectorValues{<:Object{F}}, i=1) where {F}
     return i > rank(F) ? nothing : (Object{F}(i), i + 1)
 end
-function Base.getindex(S::SectorValues{<:Object{F}}, i) where {F}
+function Base.getindex(S::SectorValues{<:Object{F}}, i::Int) where {F}
     return 0 < i <= rank(F) ? Object{F}(i) : throw(BoundsError(S, i))
 end
 TensorKitSectors.findindex(::SectorValues{I}, c::I) where {I<:Object} = c.id

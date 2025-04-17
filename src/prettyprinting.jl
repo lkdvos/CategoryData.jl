@@ -35,9 +35,10 @@ macro objectnames(categoryname, names...)
         constex = if __module__ == CategoryData
             quote
                 const $name = $category
-                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
-                    return print(io, $name_str)
-                end
+                export $name
+                # function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
+                #     return print(io, $name_str)
+                # end
             end
         else
             quote
@@ -64,13 +65,20 @@ macro objectnames(categoryname, names...)
             return Object{$name}(id)
         end
 
-        function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
+        function Base.show(io::IO, ψ::Object{$name})
             symbol = $names[ψ.id]
-            if get(io, :typeinfo, Any) !== Object{$name}
-                print(io, symbol, " ∈ 𝒪($(string($name)))")
+            if typeof(ψ) === get(io, :typeinfo, Any)
+                print(io, ':', symbol)
             else
-                print(io, symbol)
+                print(io, typeof(ψ), "(:$symbol)")
             end
+            return nothing
+        end
+
+        function Base.convert(::Type{Object{$name}}, a::Symbol)
+            id = findfirst(==(a), $names)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) object $a."))
+            return Object{$name}(id)
         end
     end
 
@@ -80,7 +88,21 @@ end
 # Show and friends
 # ----------------
 
-function Base.show(io::IO, ::MIME"text/plain", ::Type{FR{R,M,N,I}}) where {R,M,N,I}
+struct ObjectTable end
+const 𝒪 = ObjectTable()
+export 𝒪
+
+TensorKitSectors.type_repr(::Type{<:Object{C}}) where {C} = "𝒪[$C]"
+
+Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Object{C}
+
+function Base.show(io::IO, ::MIME"text/plain", C::Type{FR{R,M,N,I}}) where {R,M,N,I}
+    aliases = Base.make_typealias(C)
+    if !isnothing(aliases)
+        show(io, C)
+        return nothing
+    end
+
     if get(io, :compact, true)
         if M == 1
             print(io, "FR$(superscript(R)) $(superscript(N))$(subscript(I))")
@@ -93,7 +115,13 @@ function Base.show(io::IO, ::MIME"text/plain", ::Type{FR{R,M,N,I}}) where {R,M,N
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", ::Type{UFC{R,M,N,I,D}}) where {R,M,N,I,D}
+function Base.show(io::IO, ::MIME"text/plain", C::Type{UFC{R,M,N,I,D}}) where {R,M,N,I,D}
+    aliases = Base.make_typealias(C)
+    if !isnothing(aliases)
+        show(io, C)
+        return nothing
+    end
+
     if get(io, :compact, true)
         if M == 1
             print(io,
@@ -108,7 +136,13 @@ function Base.show(io::IO, ::MIME"text/plain", ::Type{UFC{R,M,N,I,D}}) where {R,
 end
 
 function Base.show(io::IO, ::MIME"text/plain",
-                   ::Type{PMFC{R,M,N,I,D₁,D₂}}) where {R,M,N,I,D₁,D₂}
+                   C::Type{PMFC{R,M,N,I,D₁,D₂}}) where {R,M,N,I,D₁,D₂}
+    aliases = Base.make_typealias(C)
+    if !isnothing(aliases)
+        show(io, C)
+        return nothing
+    end
+
     if get(io, :compact, true)
         if M == 1
             print(io,
@@ -128,6 +162,15 @@ function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:Fusion
     else
         print(io, ψ.id)
     end
+end
+
+function Base.show(io::IO, ψ::Object)
+    if typeof(ψ) === get(io, :typeinfo, Any)
+        print(io, ψ.id)
+    else
+        print(io, typeof(ψ), "(", ψ.id, ")")
+    end
+    return nothing
 end
 
 # Grouplike things

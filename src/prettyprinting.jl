@@ -86,6 +86,12 @@ macro objectnames(categoryname, names...)
 end
 
 struct ObjectTable end
+"""
+    const 𝒪
+
+A constant of a singleton type used as `𝒪[F]` with `F<:FusionRing`, to construct
+and display the type `Object{F}` instances. 
+"""
 const 𝒪 = ObjectTable()
 export 𝒪
 

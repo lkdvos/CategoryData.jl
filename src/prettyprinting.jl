@@ -85,16 +85,15 @@ macro objectnames(categoryname, names...)
     return esc(ex)
 end
 
-# Show and friends
-# ----------------
-
 struct ObjectTable end
 const 𝒪 = ObjectTable()
 export 𝒪
 
-TensorKitSectors.type_repr(::Type{<:Object{C}}) where {C} = "𝒪[$C]"
-
+TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "𝒪[$F]"
 Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Object{C}
+
+# Show and friends
+# ----------------
 
 function Base.show(io::IO, ::MIME"text/plain", C::Type{FR{R,M,N,I}}) where {R,M,N,I}
     aliases = Base.make_typealias(C)

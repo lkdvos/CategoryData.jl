@@ -17,6 +17,7 @@ export RepA4, E6, Fib, Ising
 export Object
 export multiplicity, rank, algebraic_structure, selfduality
 export S, D, Ƶ
+export @objectnames
 
 include("categories.jl")
 include("objects.jl")

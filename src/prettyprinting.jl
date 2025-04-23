@@ -60,13 +60,13 @@ macro objectnames(categoryname, names...)
 
     ex = quote
         $constex
-        function Object{$name}(a::Symbol)
+        function Irr{$name}(a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $($name_str) object $a."))
-            return Object{$name}(id)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Irr $a."))
+            return Irr{$name}(id)
         end
 
-        function Base.show(io::IO, ψ::Object{$name})
+        function Base.show(io::IO, ψ::Irr{$name})
             symbol = $names[ψ.id]
             if typeof(ψ) === get(io, :typeinfo, Any)
                 print(io, ':', symbol)
@@ -76,10 +76,10 @@ macro objectnames(categoryname, names...)
             return nothing
         end
 
-        function Base.convert(::Type{Object{$name}}, a::Symbol)
+        function Base.convert(::Type{Irr{$name}}, a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $($name_str) object $a."))
-            return Object{$name}(id)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Irr $a."))
+            return Irr{$name}(id)
         end
     end
 
@@ -88,16 +88,30 @@ end
 
 struct ObjectTable end
 """
-    const 𝒪
+    const Irr
 
-A constant of a singleton type used as `𝒪[F]` with `F<:FusionRing`, to construct
-and display the type `Object{F}` instances. 
+A constant of a singleton type used as `Irr{F}` with `F<:FusionRing`, to construct
+and display the type `Irr{F}` instances. 
 """
-const 𝒪 = ObjectTable()
-export 𝒪
+# const Irr = ObjectTable()
+# export Irr
 
-TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "𝒪[$F]"
-Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Object{C}
+TensorKitSectors.type_repr(::Type{<:Irr{F}}) where {F<:FusionRing} = "$F"
+Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Irr{C}
+
+struct IrrTable end
+"""
+    const Ob
+
+A constant of a singleton type used as `Ob[Irr{I}]` with `I<:Sector` a type of sector, to
+construct or obtain the concrete type `TensorKit.GradedSpace{I,D}` instances without having to
+specify `D`.
+"""
+const Ob = IrrTable()
+Base.getindex(::IrrTable, I::Type{<:Irr{F}}) where {F<:FusionRing} = GradedSpace{I,NTuple{length(values(I)),Int}}
+
+
+TensorKit.type_repr(::Type{GradedSpace{I,D}}) where {I<:Irr{F}, D} where {F<:FusionRing} = "Ob[" * TensorKitSectors.type_repr(I) * "]"
 
 # Show and friends
 # ----------------
@@ -162,15 +176,15 @@ function Base.show(io::IO, ::MIME"text/plain",
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
-    if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, ψ.id, " ∈ 𝒪(", FR, ")")
+function Base.show(io::IO, ::MIME"text/plain", ψ::Irr{FR}) where {FR<:FusionRing}
+    if get(io, :typeinfo, Any) !== Irr{FR}
+        print(io, ψ.id, " ∈ Irr(", FR, ")")
     else
         print(io, ψ.id)
     end
 end
 
-function Base.show(io::IO, ψ::Object)
+function Base.show(io::IO, ψ::Irr)
     if typeof(ψ) === get(io, :typeinfo, Any)
         print(io, ψ.id)
     else
@@ -199,14 +213,14 @@ function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{D{N}}) where {N}
         N == 5 ? RepD5 :
         N == 6 ? RepD7 :
         throw(ArgumentError("Rep[D{$N}] not implemented."))
-    return Object{𝒞}
+    return Irr{𝒞}
 end
 
 function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{S{N}}) where {N}
     𝒞 = N == 3 ? RepS3 :
         N == 4 ? RepS4 :
         throw(ArgumentError("Rep[S{$N}] not implemented."))
-    return Object{𝒞}
+    return Irr{𝒞}
 end
 
 # Centers

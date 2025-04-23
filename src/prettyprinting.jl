@@ -86,32 +86,11 @@ macro objectnames(categoryname, names...)
     return esc(ex)
 end
 
+# TensorKit shorter GradedSpaces
 struct ObjectTable end
-"""
-    const Irr
-
-A constant of a singleton type used as `Irr{F}` with `F<:FusionRing`, to construct
-and display the type `Irr{F}` instances. 
-"""
-# const Irr = ObjectTable()
-# export Irr
 
 TensorKitSectors.type_repr(::Type{<:Irr{F}}) where {F<:FusionRing} = "$F"
 Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Irr{C}
-
-struct IrrTable end
-"""
-    const Ob
-
-A constant of a singleton type used as `Ob[Irr{I}]` with `I<:Sector` a type of sector, to
-construct or obtain the concrete type `TensorKit.GradedSpace{I,D}` instances without having to
-specify `D`.
-"""
-const Ob = IrrTable()
-Base.getindex(::IrrTable, I::Type{<:Irr{F}}) where {F<:FusionRing} = GradedSpace{I,NTuple{length(values(I)),Int}}
-
-
-TensorKit.type_repr(::Type{GradedSpace{I,D}}) where {I<:Irr{F}, D} where {F<:FusionRing} = "Ob[" * TensorKitSectors.type_repr(I) * "]"
 
 # Show and friends
 # ----------------

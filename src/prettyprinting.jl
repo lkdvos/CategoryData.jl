@@ -60,13 +60,13 @@ macro objectnames(categoryname, names...)
 
     ex = quote
         $constex
-        function Irr{$name}(a::Symbol)
+        function Object{$name}(a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Irr $a."))
-            return Irr{$name}(id)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))
+            return Object{$name}(id)
         end
 
-        function Base.show(io::IO, ψ::Irr{$name})
+        function Base.show(io::IO, ψ::Object{$name})
             symbol = $names[ψ.id]
             if typeof(ψ) === get(io, :typeinfo, Any)
                 print(io, ':', symbol)
@@ -76,21 +76,17 @@ macro objectnames(categoryname, names...)
             return nothing
         end
 
-        function Base.convert(::Type{Irr{$name}}, a::Symbol)
+        function Base.convert(::Type{Object{$name}}, a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Irr $a."))
-            return Irr{$name}(id)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))
+            return Object{$name}(id)
         end
     end
 
     return esc(ex)
 end
 
-# TensorKit shorter GradedSpaces
-struct ObjectTable end
 
-TensorKitSectors.type_repr(::Type{<:Irr{F}}) where {F<:FusionRing} = "$F"
-Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Irr{C}
 
 # Show and friends
 # ----------------
@@ -155,15 +151,15 @@ function Base.show(io::IO, ::MIME"text/plain",
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", ψ::Irr{FR}) where {FR<:FusionRing}
-    if get(io, :typeinfo, Any) !== Irr{FR}
-        print(io, ψ.id, " ∈ Irr(", FR, ")")
+function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
+    if get(io, :typeinfo, Any) !== Object{FR}
+        print(io, ψ.id, " ∈ Irr[", FR, "]")
     else
         print(io, ψ.id)
     end
 end
 
-function Base.show(io::IO, ψ::Irr)
+function Base.show(io::IO, ψ::Object)
     if typeof(ψ) === get(io, :typeinfo, Any)
         print(io, ψ.id)
     else
@@ -192,14 +188,14 @@ function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{D{N}}) where {N}
         N == 5 ? RepD5 :
         N == 6 ? RepD7 :
         throw(ArgumentError("Rep[D{$N}] not implemented."))
-    return Irr{𝒞}
+    return Object{𝒞}
 end
 
 function Base.getindex(::TensorKitSectors.IrrepTable, G::Type{S{N}}) where {N}
     𝒞 = N == 3 ? RepS3 :
         N == 4 ? RepS4 :
         throw(ArgumentError("Rep[S{$N}] not implemented."))
-    return Irr{𝒞}
+    return Object{𝒞}
 end
 
 # Centers

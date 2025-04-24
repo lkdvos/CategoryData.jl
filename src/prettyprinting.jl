@@ -95,7 +95,6 @@ end
 
 # TensorKit shorter GradedSpaces
 struct ObjectTable end
-#TODO: make docstring better
 """
     const Irr
 

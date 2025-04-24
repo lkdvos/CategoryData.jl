@@ -79,7 +79,7 @@ macro objectnames(categoryname, names...)
             if get(io, :typeinfo, Any) !== Object{$name}
                 print(io, ':', symbol, " ∈ Irr[", $name, "]")
             else
-                print(io, ψ.id)
+                print(io, symbol)
             end
         end
 

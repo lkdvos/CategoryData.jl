@@ -31,7 +31,8 @@ macro objectnames(categoryname, names...)
     if Meta.isexpr(categoryname, :(=), 2)
         name = categoryname.args[1]
         category = categoryname.args[2]
-        length(names) == rank(@eval $category) || throw(ArgumentError("Number of names does not match number of objects."))
+        length(names) == rank(@eval $category) ||
+            throw(ArgumentError("Number of names does not match number of objects."))
         name_str = string(name)
         constex = if __module__ == CategoryData
             quote

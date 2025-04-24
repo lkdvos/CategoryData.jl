@@ -14,7 +14,7 @@ using SparseArrayKit
 export FusionRing, FusionCategory, BraidedCategory
 export FR, UFC, PMFC
 export RepA4, E6, Fib, Ising
-export Object
+export Object, Irr
 export multiplicity, rank, algebraic_structure, selfduality
 export S, D, Ƶ
 export @objectnames

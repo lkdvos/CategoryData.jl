@@ -38,9 +38,6 @@ macro objectnames(categoryname, names...)
             quote
                 const $name = $category
                 export $name
-                # function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
-                #     return print(io, $name_str)
-                # end
             end
         else
             quote

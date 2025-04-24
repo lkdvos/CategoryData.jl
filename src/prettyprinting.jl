@@ -76,6 +76,15 @@ macro objectnames(categoryname, names...)
             return nothing
         end
 
+        function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
+            symbol = $names[ψ.id]
+            if get(io, :typeinfo, Any) !== Object{$name}
+                print(io, ':', symbol, " ∈ Irr[", $name, "]")
+            else
+                print(io, ψ.id)
+            end
+        end
+
         function Base.convert(::Type{Object{$name}}, a::Symbol)
             id = findfirst(==(a), $names)
             isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))

@@ -63,24 +63,7 @@ macro objectnames(categoryname, names...)
             return Object{$name}(id)
         end
 
-        function Base.show(io::IO, ψ::Object{$name})
-            symbol = $names[ψ.id]
-            if typeof(ψ) === get(io, :typeinfo, Any)
-                print(io, ':', symbol)
-            else
-                print(io, typeof(ψ), "(:$symbol)")
-            end
-            return nothing
-        end
-
-        function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
-            symbol = $names[ψ.id]
-            if get(io, :typeinfo, Any) !== Object{$name}
-                print(io, "$(TensorKitSectors.type_repr(typeof(ψ)))(:$symbol)")
-            else
-                print(io, symbol)
-            end
-        end
+        $CategoryData._label(a::Object{$name}) = string(QuoteNode($names[a.id]))
 
         function Base.convert(::Type{Object{$name}}, a::Symbol)
             id = findfirst(==(a), $names)
@@ -157,20 +140,15 @@ end
 
 TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "Object{$F}"
 
-function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
-    if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, TensorKitSectors.type_repr(typeof(ψ)), "(", ψ.id, ")")
-    else
-        print(io, ψ.id)
-    end
-end
+# overloadable getter for the id of an object
+_label(o::Object) = o.id
 
 function Base.show(io::IO, ψ::Object)
     I = typeof(ψ)
     if I === get(io, :typeinfo, nothing)
-        print(io, ψ.id)
+        print(io, _label(ψ.id))
     else
-        print(io, TensorKitSectors.type_repr(I), "(", ψ.id, ")")
+        print(io, TensorKitSectors.type_repr(I), "(", _label(ψ), ")")
     end
     return nothing
 end

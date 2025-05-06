@@ -33,7 +33,7 @@ macro objectnames(categoryname, names...)
         category = categoryname.args[2]
         length(names) == rank(@eval $category) ||
             throw(ArgumentError("Number of names does not match number of objects."))
-        name_str = string(name)
+
         constex = if __module__ == CategoryData
             quote
                 const $name = $category
@@ -42,12 +42,6 @@ macro objectnames(categoryname, names...)
         else
             quote
                 const $name = $category
-                function Base.show(io::IO, ::Type{$name})
-                    return print(io, $name_str)
-                end
-                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
-                    return print(io, $name_str)
-                end
             end
         end
     else
@@ -56,8 +50,13 @@ macro objectnames(categoryname, names...)
         constex = :()
     end
 
+    name_str = string(name)
+
     ex = quote
         $constex
+
+        $TensorKitSectors.type_repr(::Type{$name}) = $name_str
+
         function Object{$name}(a::Symbol)
             id = findfirst(==(a), $names)
             isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))

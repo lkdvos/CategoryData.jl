@@ -93,18 +93,6 @@ macro objectnames(categoryname, names...)
     return esc(ex)
 end
 
-# TensorKit shorter GradedSpaces
-struct ObjectTable end
-"""
-    const Irr
-
-A constant of singleton type used as `Irr[F]` with `F<:FusionRing` to construct or obtain
-the concrete type of the isomorphism classes of simple objects in the fusion ring `F`.
-"""
-const Irr = ObjectTable()
-TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "Irr[$F]"
-Base.getindex(::ObjectTable, C::Type{<:FusionRing}) = Object{C}
-
 # Show and friends
 # ----------------
 
@@ -168,25 +156,24 @@ function Base.show(io::IO, ::MIME"text/plain",
     end
 end
 
+TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "Object{$F}"
+
 function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
     if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, ψ.id, " ∈ Irr[", FR, "]")
+        print(io, ψ.id, " ∈ ", TensorKitSectors.type_repr(typeof(ψ)))
     else
         print(io, ψ.id)
     end
 end
 
 function Base.show(io::IO, ψ::Object)
-    if typeof(ψ) === get(io, :typeinfo, Any)
-        print(io, ψ.id)
+    I = typeof(ψ)
+    if I === get(io, :typeinfo, nothing)
+        print(io, ψ.id) 
     else
-        print(io, typeof(ψ), "(", ψ.id, ")")
+        print(io, TensorKitSectors.type_repr(I), "(", ψ.id, ")")
     end
     return nothing
-end
-
-function Base.show(io::IO, ::Type{Object{F}}) where {F<:FusionRing}
-    return print(io, "Irr[", F, "]")
 end
 
 # Grouplike things

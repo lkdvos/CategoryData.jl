@@ -33,17 +33,7 @@ macro objectnames(categoryname, names...)
         category = categoryname.args[2]
         length(names) == rank(@eval $category) ||
             throw(ArgumentError("Number of names does not match number of objects."))
-
-        constex = if __module__ == CategoryData
-            quote
-                const $name = $category
-                export $name
-            end
-        else
-            quote
-                const $name = $category
-            end
-        end
+        constex = :(const $name = $category)
     else
         name = categoryname
         category = categoryname

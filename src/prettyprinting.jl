@@ -78,67 +78,9 @@ end
 # Show and friends
 # ----------------
 
-function Base.show(io::IO, ::MIME"text/plain", C::Type{FR{R,M,N,I}}) where {R,M,N,I}
-    aliases = Base.make_typealias(C)
-    if !isnothing(aliases)
-        show(io, C)
-        return nothing
-    end
-
-    if get(io, :compact, true)
-        if M == 1
-            print(io, "FR$(superscript(R)) $(superscript(N))$(subscript(I))")
-        else
-            print(io,
-                  "FR$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I))")
-        end
-    else
-        show(io, FR{R,M,N,I})
-    end
+function TensorKitSectors.type_repr(::Type{Object{F}}) where {F<:FusionRing}
+    return "Object{$(TensorKitSectors.type_repr(F))}"
 end
-
-function Base.show(io::IO, ::MIME"text/plain", C::Type{UFC{R,M,N,I,D}}) where {R,M,N,I,D}
-    aliases = Base.make_typealias(C)
-    if !isnothing(aliases)
-        show(io, C)
-        return nothing
-    end
-
-    if get(io, :compact, true)
-        if M == 1
-            print(io,
-                  "UFC$(superscript(R)) $(superscript(N))$(subscript(I)) $(subscript(D))")
-        else
-            print(io,
-                  "UFC$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I)) $(subscript(D))")
-        end
-    else
-        show(io, UFC{R,M,N,I,D})
-    end
-end
-
-function Base.show(io::IO, ::MIME"text/plain",
-                   C::Type{PMFC{R,M,N,I,D₁,D₂}}) where {R,M,N,I,D₁,D₂}
-    aliases = Base.make_typealias(C)
-    if !isnothing(aliases)
-        show(io, C)
-        return nothing
-    end
-
-    if get(io, :compact, true)
-        if M == 1
-            print(io,
-                  "PMFC$(superscript(R)) $(superscript(N))$(subscript(I)) $(subscript(D₁)) $(subscript(D₂))")
-        else
-            print(io,
-                  "PMFC$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I)) $(subscript(D₁)) $(subscript(D₂))")
-        end
-    else
-        show(io, PMFC{R,M,N,I,D₁,D₂})
-    end
-end
-
-TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "Object{$F}"
 
 # overloadable getter for the id of an object
 _label(o::Object) = o.id

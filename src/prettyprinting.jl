@@ -77,7 +77,7 @@ macro objectnames(categoryname, names...)
         function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
             symbol = $names[ψ.id]
             if get(io, :typeinfo, Any) !== Object{$name}
-                print(io, "$(TensorKitSectors.type_repr(typeof(ψ)))($symbol)")
+                print(io, "$(TensorKitSectors.type_repr(typeof(ψ)))(:$symbol)")
             else
                 print(io, symbol)
             end

@@ -169,7 +169,7 @@ end
 function Base.show(io::IO, ψ::Object)
     I = typeof(ψ)
     if I === get(io, :typeinfo, nothing)
-        print(io, ψ.id) 
+        print(io, ψ.id)
     else
         print(io, TensorKitSectors.type_repr(I), "(", ψ.id, ")")
     end

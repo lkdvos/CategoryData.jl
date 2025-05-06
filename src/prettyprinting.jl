@@ -77,7 +77,7 @@ macro objectnames(categoryname, names...)
         function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
             symbol = $names[ψ.id]
             if get(io, :typeinfo, Any) !== Object{$name}
-                print(io, ':', symbol, " ∈ ", TensorKitSectors.type_repr(typeof(ψ)))
+                print(io, "$(TensorKitSectors.type_repr(typeof(ψ)))($symbol)")
             else
                 print(io, symbol)
             end
@@ -160,7 +160,7 @@ TensorKitSectors.type_repr(::Type{<:Object{F}}) where {F<:FusionRing} = "Object{
 
 function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
     if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, ψ.id, " ∈ ", TensorKitSectors.type_repr(typeof(ψ)))
+        print(io, TensorKitSectors.type_repr(typeof(ψ)), "(", ψ.id, ")")
     else
         print(io, ψ.id)
     end

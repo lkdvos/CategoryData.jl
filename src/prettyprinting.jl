@@ -79,7 +79,7 @@ _label(o::Object) = o.id
 function Base.show(io::IO, ψ::Object)
     I = typeof(ψ)
     if I === get(io, :typeinfo, nothing)
-        print(io, _label(ψ.id))
+        print(io, _label(ψ))
     else
         print(io, TensorKitSectors.type_repr(I), "(", _label(ψ), ")")
     end

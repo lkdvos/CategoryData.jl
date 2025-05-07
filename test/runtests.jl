@@ -34,3 +34,28 @@ end
 include("fusionrings.jl")
 include("fusioncategories.jl")
 include("braidedcategories.jl")
+
+# printing tests
+object_name_list = [Fib, Ising, H1, H2, H3] # these have unit alias :I
+
+@testset verbose = true "Object alias $(F)" for F in object_name_list
+    I = Object{F}
+    Istr = TensorKitSectors.type_repr(I)
+
+    @testset "Pretty printing of Sector $Istr" begin
+        @test @constinferred(convert(I, :I)) == one(I)
+        @test eval(Meta.parse(sprint(show, I(:I)))) == one(I) == I(:I) == I(1)
+        
+        s = randsector(I)
+        @test eval(Meta.parse(sprint(show, s))) == I(s.id) == s
+    end
+end
+
+@testset "Pretty printing of Sector Object{ZVecS3}" begin
+    I = Object{ZVecS3}
+    @test @constinferred(convert(I, :A)) == one(I)
+    @test eval(Meta.parse(sprint(show, I(:A)))) == one(I) == I(:A) == I(1)
+    
+    s = randsector(I)
+    @test eval(Meta.parse(sprint(show, s))) == I(s.id) == s
+end

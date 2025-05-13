@@ -58,6 +58,7 @@ end
 
     s = randsector(I)
     @test eval(Meta.parse(sprint(show, s))) == I(s.id) == s
+    
 end
 
 @testset "@objectnames" begin

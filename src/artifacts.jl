@@ -58,6 +58,8 @@ function list_braidedcategories()
     return categories
 end
 
+_all_data = vcat(list_fusionrings(), list_fusioncategories(), list_braidedcategories())
+
 # Nsymbols
 # --------
 

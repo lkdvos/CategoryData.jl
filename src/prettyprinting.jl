@@ -38,8 +38,10 @@ macro objectnames(categoryname, names...)
         constex = :()
     end
 
-    length(names) == rank(@eval $category) ||
-        throw(ArgumentError("Number of names does not match number of objects."))
+    eval(category) in _all_data || throw(ArgumentError("Unknown category $category"))
+    R = rank(eval(category))
+    length(names) == R ||
+        throw(ArgumentError("Number of names does not match number of objects"))
 
     name_str = string(name)
 

@@ -59,3 +59,27 @@ end
     s = randsector(I)
     @test eval(Meta.parse(sprint(show, s))) == I(s.id) == s
 end
+
+@testset "@objectnames" begin
+    @testset "Working examples" begin
+        global testcat, testcat2, testcat3
+        @objectnames testcat = FR{4,1,2,2} A B C D
+        @objectnames testcat2 = UFC{5,1,2,4,0} α β γ δ ε
+        @objectnames testcat3 = PMFC{6,1,0,4,0,7} a b c d e f
+
+        @test Object{testcat}(:A) == one(Object{testcat})
+        @test Object{testcat2}(:β) == Object{testcat2}(2)
+        @test Object{testcat3}(:c) == Object{testcat3}(3)
+    end
+
+    @testset "Erroring examples" begin
+        error1 = "Number of names does not match number of objects"
+        error2 = "Unknown category PMFC{6, 5, 4, 3, 2, 1}"
+        @test_throws ArgumentError(error1) @macroexpand @objectnames testcat = UFC{5,1,2,4,
+                                                                                   0} α β γ δ
+        @test_throws ArgumentError(error1) @macroexpand @objectnames testcat2 = PMFC{6,1,0,
+                                                                                     4,0,7} a b c d e f g
+        @test_throws ArgumentError(error2) @macroexpand @objectnames testcat3 = PMFC{6,5,4,
+                                                                                     3,2,1} A B C D E F
+    end
+end

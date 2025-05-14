@@ -40,7 +40,8 @@ macro objectnames(categoryname, names...)
 
     try
         R = rank(eval(category))
-        length(names) == R || throw(ArgumentError("Number of names does not match number of objects"))
+        length(names) == R ||
+            throw(ArgumentError("Number of names does not match number of objects"))
     catch ex
         if ex isa UndefVarError
             throw(ArgumentError("Unknown category $category"))

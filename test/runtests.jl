@@ -60,7 +60,7 @@ end
     @test eval(Meta.parse(sprint(show, s))) == I(s.id) == s
 end
 
-@testset "@objectnames" begin
+@testset verbose = true "@objectnames" begin
     @testset "Working examples" begin
         global testcat, testcat2, testcat3
         @objectnames testcat = FR{4,1,2,2} A B C D

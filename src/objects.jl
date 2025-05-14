@@ -1,7 +1,6 @@
 struct Object{F} <: Sector where {F<:FusionRing}
     id::Int
     function Object{F}(a::Int) where {F<:FusionRing}
-        F in _all_data || throw(ArgumentError("Unknown $F"))
         0 < a <= rank(F) || throw(ArgumentError("Unknown $F Object $a."))
         return new{F}(a)
     end

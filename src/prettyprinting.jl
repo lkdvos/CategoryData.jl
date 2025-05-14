@@ -38,10 +38,16 @@ macro objectnames(categoryname, names...)
         constex = :()
     end
 
-    eval(category) in _all_data || throw(ArgumentError("Unknown category $category"))
-    R = rank(eval(category))
-    length(names) == R ||
-        throw(ArgumentError("Number of names does not match number of objects"))
+    try
+        R = rank(eval(category))
+        length(names) == R || throw(ArgumentError("Number of names does not match number of objects"))
+    catch ex
+        if ex isa UndefVarError
+            throw(ArgumentError("Unknown category $category"))
+        else
+            rethrow(ex)
+        end
+    end
 
     name_str = string(name)
 

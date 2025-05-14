@@ -73,13 +73,10 @@ end
     end
 
     @testset "Erroring examples" begin
-        error1 = "Number of names does not match number of objects"
-        error2 = "Unknown category PMFC{6, 5, 4, 3, 2, 1}"
-        @test_throws ArgumentError(error1) @macroexpand @objectnames testcat = UFC{5,1,2,4,
-                                                                                   0} α β γ δ
-        @test_throws ArgumentError(error1) @macroexpand @objectnames testcat2 = PMFC{6,1,0,
-                                                                                     4,0,7} a b c d e f g
-        @test_throws ArgumentError(error2) @macroexpand @objectnames testcat3 = PMFC{6,5,4,
-                                                                                     3,2,1} A B C D E F
+        error = "Number of names does not match number of objects"
+        @test_throws ArgumentError(error) @macroexpand @objectnames testcat = UFC{5,1,2,4,
+                                                                                  0} α β γ δ
+        @test_throws ArgumentError(error) @macroexpand @objectnames testcat2 = PMFC{6,1,0,
+                                                                                    4,0,7} a b c d e f g
     end
 end

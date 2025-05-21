@@ -31,46 +31,44 @@ macro objectnames(categoryname, names...)
     if Meta.isexpr(categoryname, :(=), 2)
         name = categoryname.args[1]
         category = categoryname.args[2]
-        name_str = string(name)
-        constex = if __module__ == CategoryData
-            quote
-                const $name = $category
-                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
-                    return print(io, $name_str)
-                end
-            end
-        else
-            quote
-                const $name = $category
-                function Base.show(io::IO, ::Type{$name})
-                    return print(io, $name_str)
-                end
-                function Base.show(io::IO, ::MIME"text/plain", ::Type{$name})
-                    return print(io, $name_str)
-                end
-            end
-        end
+        constex = :(const $name = $category)
     else
         name = categoryname
         category = categoryname
         constex = :()
     end
 
+    try
+        R = rank(eval(category))
+        length(names) == R ||
+            throw(ArgumentError("Number of names does not match number of objects"))
+    catch ex
+        if ex isa UndefVarError
+            throw(ArgumentError("Unknown category $category"))
+        else
+            rethrow(ex)
+        end
+    end
+
+    name_str = string(name)
+
     ex = quote
         $constex
+
+        $TensorKitSectors.type_repr(::Type{$name}) = $name_str
+
         function Object{$name}(a::Symbol)
             id = findfirst(==(a), $names)
-            isnothing(id) && throw(ArgumentError("Unknown $($name_str) object $a."))
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))
             return Object{$name}(id)
         end
 
-        function Base.show(io::IO, ::MIME"text/plain", ψ::Object{$name})
-            symbol = $names[ψ.id]
-            if get(io, :typeinfo, Any) !== Object{$name}
-                print(io, symbol, " ∈ 𝒪($(string($name)))")
-            else
-                print(io, symbol)
-            end
+        $CategoryData._label(a::Object{$name}) = string(QuoteNode($names[a.id]))
+
+        function Base.convert(::Type{Object{$name}}, a::Symbol)
+            id = findfirst(==(a), $names)
+            isnothing(id) && throw(ArgumentError("Unknown $($name_str) Object $a."))
+            return Object{$name}(id)
         end
     end
 
@@ -80,54 +78,21 @@ end
 # Show and friends
 # ----------------
 
-function Base.show(io::IO, ::MIME"text/plain", ::Type{FR{R,M,N,I}}) where {R,M,N,I}
-    if get(io, :compact, true)
-        if M == 1
-            print(io, "FR$(superscript(R)) $(superscript(N))$(subscript(I))")
-        else
-            print(io,
-                  "FR$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I))")
-        end
-    else
-        show(io, FR{R,M,N,I})
-    end
+function TensorKitSectors.type_repr(::Type{Object{F}}) where {F<:FusionRing}
+    return "Object{$(TensorKitSectors.type_repr(F))}"
 end
 
-function Base.show(io::IO, ::MIME"text/plain", ::Type{UFC{R,M,N,I,D}}) where {R,M,N,I,D}
-    if get(io, :compact, true)
-        if M == 1
-            print(io,
-                  "UFC$(superscript(R)) $(superscript(N))$(subscript(I)) $(subscript(D))")
-        else
-            print(io,
-                  "UFC$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I)) $(subscript(D))")
-        end
-    else
-        show(io, UFC{R,M,N,I,D})
-    end
-end
+# overloadable getter for the id of an object
+_label(o::Object) = o.id
 
-function Base.show(io::IO, ::MIME"text/plain",
-                   ::Type{PMFC{R,M,N,I,D₁,D₂}}) where {R,M,N,I,D₁,D₂}
-    if get(io, :compact, true)
-        if M == 1
-            print(io,
-                  "PMFC$(superscript(R)) $(superscript(N))$(subscript(I)) $(subscript(D₁)) $(subscript(D₂))")
-        else
-            print(io,
-                  "PMFC$(superscript(R)) $(superscript(M)) $(superscript(N))$(subscript(I)) $(subscript(D₁)) $(subscript(D₂))")
-        end
+function Base.show(io::IO, ψ::Object)
+    I = typeof(ψ)
+    if I === get(io, :typeinfo, nothing)
+        print(io, _label(ψ))
     else
-        show(io, PMFC{R,M,N,I,D₁,D₂})
+        print(io, TensorKitSectors.type_repr(I), "(", _label(ψ), ")")
     end
-end
-
-function Base.show(io::IO, ::MIME"text/plain", ψ::Object{FR}) where {FR<:FusionRing}
-    if get(io, :typeinfo, Any) !== Object{FR}
-        print(io, ψ.id, " ∈ 𝒪(", FR, ")")
-    else
-        print(io, ψ.id)
-    end
+    return nothing
 end
 
 # Grouplike things

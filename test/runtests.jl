@@ -78,3 +78,13 @@ end
         @test_throws ArgumentError(error) @macroexpand @objectnames testcat2 = PMFC{6, 1, 0, 4, 0, 7} a b c d e f g
     end
 end
+
+@testset "Aqua" begin
+    using Aqua: Aqua
+    Aqua.test_all(CategoryData)
+end
+
+@testset "JET" begin
+    using JET: JET
+    JET.test_package(TensorKitSectors; target_defined_modules = true)
+end

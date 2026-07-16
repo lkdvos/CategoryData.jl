@@ -1,10 +1,14 @@
 const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-temp", "data")
 
+const fusionring_format = r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+).txt"
+const fusioncategory_format = r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+)_(?<D1>\d+)_(?<D2>\d+).txt"
+const braidedcategory_format = r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+)_(?<D1>\d+)_(?<D2>\d+).txt" # same as fusion category, but for clarity
+
 function list_fusionrings()
     foldername = joinpath(artifact_path, "Nsymbols")
     rings = Vector{Type{<:FusionRing}}()
     for file in readdir(foldername)
-        m = match(r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+).txt", file)
+        m = match(fusionring_format, file)
         if !isnothing(m)
             R, M, N, I = parse.(Int, (m[:R], m[:M], m[:N], m[:I]))
             push!(rings, FR{R, M, N, I})
@@ -23,7 +27,7 @@ function list_fusioncategories() # strictly fusion categories, not braided
     foldername = joinpath(artifact_path, "Fsymbols")
     categories = Vector{Type{<:FusionCategory}}()
     for file in readdir(foldername)
-        m = match(r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+)_(?<D1>\d+)_(?<D2>\d+).txt", file)
+        m = match(fusioncategory_format, file)
         if !isnothing(m)
             R, M, N, I, D₁, D₂ = parse.(Int, (m[:R], m[:M], m[:N], m[:I], m[:D1], m[:D2]))
             if iszero(D₂) # _0 means it's unbraided, so it's a UFC
@@ -44,9 +48,7 @@ function list_braidedcategories()
     foldername = joinpath(artifact_path, "Rsymbols")
     categories = Vector{Type{<:BraidedCategory}}()
     for file in readdir(foldername)
-        m = match(
-            r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+)_(?<D1>\d+)_(?<D2>\d+).txt", file
-        )
+        m = match(braidedcategory_format, file)
         if !isnothing(m)
             R, M, N, I, D₁, D₂ = parse.(Int, (m[:R], m[:M], m[:N], m[:I], m[:D1], m[:D2]))
             push!(categories, PMFC{R, M, N, I, D₁, D₂})
@@ -71,16 +73,17 @@ function N_artifact(::Type{F}) where {F <: Union{FR, UFC, PMFC}}
     )
 end
 
-const N_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+)$"
+const N_format_multfree = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+)$"
+const N_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<N>\d+)$" # for old or newer multiplicity-full data
 
 function parse_Nsymbol(line)
-    m = match(N_format, line)
+    m = match(N_format_multfree, line)
     if !isnothing(m)
         a, b, c = parse.(Int, (m[:a], m[:b], m[:c]))
         return a, b, c, 1 # manually add multiplicity-free if N not given
     end
 
-    m = match(r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<N>\d+)$", line) # for old data
+    m = match(N_format, line)
     isnothing(m) && throw(Meta.ParseError("invalid N pattern: $line"))
 
     a, b, c, N = parse.(Int, (m[:a], m[:b], m[:c], m[:N]))
@@ -135,10 +138,11 @@ function F_artifact(::Type{F}) where {F <: PMFC}
     )
 end
 
-const F_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<d>\d+) (?<e>\d+) (?<f>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$"
+const F_format_multfree = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<d>\d+) (?<e>\d+) (?<f>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$"
+const F_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<d>\d+) (?<e>\d+) (?<f>\d+) (?<α>\d+) (?<β>\d+) (?<μ>\d+) (?<ν>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$"
 
 function parse_Fsymbol(line)
-    m = match(F_format, line)
+    m = match(F_format_multfree, line)
     if !isnothing(m)
         a, b, c, d, e, f = parse.(Int, (m[:a], m[:b], m[:c], m[:d], m[:e], m[:f]))
         labels = (a, b, c, d, e, f, 1, 1, 1, 1)
@@ -146,7 +150,7 @@ function parse_Fsymbol(line)
         return labels..., val
     end
 
-    m = match(r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<d>\d+) (?<e>\d+) (?<f>\d+) (?<α>\d+) (?<β>\d+) (?<μ>\d+) (?<ν>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$", line)
+    m = match(F_format, line)
     isnothing(m) && throw(Meta.ParseError("invalid F pattern: $line"))
 
     labels = parse.(Int, (m[:a], m[:b], m[:c], m[:d], m[:e], m[:f], m[:α], m[:β], m[:μ], m[:ν]))
@@ -280,10 +284,11 @@ function R_artifact(::Type{F}) where {F <: PMFC}
     )
 end
 
-const R_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$"
+const R_format_multfree = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$"
+const R_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<μ>\d+) (?<ν>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$" # for old or newer multiplicity-full data
 
 function parse_Rsymbol(line)
-    m = match(R_format, line)
+    m = match(R_format_multfree, line)
     if !isnothing(m)
         a, b, c = parse.(Int, (m[:a], m[:b], m[:c]))
         labels = (a, b, c, 1, 1) # manually add multiplicity labels 1 if not given
@@ -291,7 +296,7 @@ function parse_Rsymbol(line)
         return labels..., val
     end
 
-    m = match(r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<μ>\d+) (?<ν>\d+) (?<re>-?\d+\.?\d*) (?<im>-?\d+\.?\d*)$", line) # for old data
+    m = match(R_format, line)
     isnothing(m) && throw(Meta.ParseError("invalid R pattern: $line"))
 
     labels = parse.(Int, (m[:a], m[:b], m[:c], m[:μ], m[:ν]))
@@ -378,7 +383,7 @@ end
 # fusiontensors
 # -------------
 
-const fusionformat = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<m1>\d+) (?<m2>\d+) (?<m3>\d+) (?<μ>\d+) (?<re>-?\d+(\.\d+)?) (?<im>-?\d+(\.\d+)?)$"
+const fusiontensor_format = r"^(?<a>\d+) (?<b>\d+) (?<c>\d+) (?<m1>\d+) (?<m2>\d+) (?<m3>\d+) (?<μ>\d+) (?<re>-?\d+(\.\d+)?) (?<im>-?\d+(\.\d+)?)$"
 
 function fusiontensor_artifact(::Type{F}) where {F <: PMFC}
     return joinpath(
@@ -388,7 +393,7 @@ function fusiontensor_artifact(::Type{F}) where {F <: PMFC}
 end
 
 function parse_fusiontensor(line)
-    m = match(fusionformat, line)
+    m = match(fusiontensor_format, line)
     local labels, val
     try
         labels = parse.(Int, (m[:a], m[:b], m[:c], m[:m1], m[:m2], m[:m3], m[:μ]))

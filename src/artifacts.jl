@@ -1,4 +1,4 @@
-const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-temp", "data")
+const artifact_path = joinpath(artifact"fusiondata", "CategoryData.jl-data-v0.2.0", "data")
 
 const fusionring_format = r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+).txt"
 const fusioncategory_format = r"FR_(?<R>\d+)_(?<M>\d+)_(?<N>\d+)_(?<I>\d+)_(?<D1>\d+)_(?<D2>\d+).txt"

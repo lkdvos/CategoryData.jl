@@ -15,6 +15,18 @@ include(testsuite_path)
 using .SectorTestSuite: randsector
 
 SectorTestSuite.smallset(::Type{I}) where {I <: Object} = collect(values(I))
+#TODO: remove when new TKS patch gets released
+function SectorTestSuite.randsector(::Type{I}) where {I <: Object}
+    s = collect(SectorTestSuite.smallset(I))
+    a = Random.rand(s)
+    if Base.IteratorSize(values(I)) === Base.HasLength()
+        length(values(I)) == 1 && return a
+    end
+    while isunit(a) # don't use trivial label
+        a = Random.rand(s)
+    end
+    return a
+end
 
 # sector tests
 @testset "Fusion rings" begin

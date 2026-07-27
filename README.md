@@ -11,7 +11,7 @@
 [![Coverage](https://codecov.io/gh/QuantumKitHub/CategoryData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/QuantumKitHub/CategoryData.jl)
 
 This package currently provides [TensorKit.jl](https://github.com/QuantumKitHub/TensorKit.jl)'s sectortypes for all objects of multiplicity-free (braided)
- fusion categories up to rank 6. The full list can be found [here](https://anyonwiki.github.io/pages/Lists/losmffc.html), along with the naming convention [here](https://anyonwiki.github.io/pages/Concepts/FormalFusionRingNames.html).
+ fusion categories up to rank 7. The full list can be found [here](https://anyonwiki.github.io/pages/Lists/losmffc.html), along with the naming convention [here](https://anyonwiki.github.io/pages/Concepts/FormalFusionRingNames.html).
 
 Additionally, some specific categories with multiplicities have also been added.
 
@@ -33,6 +33,20 @@ using TensorKit, CategoryData
 
 t = rand(ComplexF64, Vect[𝒪](1 => 2, 2 => 2) ← Vect[𝒪](1 =>2, 2 => 2))
 ```
+
+## How to select a category
+The majority of the categories follow the conventions of the AnyonWiki. In particular, both fusion and braided categories have the same first five indices, which are the rank `R`, multiplicity `M`, self-duality `N`, ring index `I` and category index `D₁`. The braided categories have an additional sixth index, which is the hexagon index `D₂`. The pivotal index is not needed, as there is only one for a fixed category index (and hexagon index for braided categories) for which the category is unitary.
+
+When selecting a unitary fusion category `𝒞` or unitary braided fusion category `𝒟`, the following syntax can be used:
+```julia
+using CategoryData
+𝒞 = UFC{R, M, N, I, D₁}
+𝒟 = PMFC{R, M, N, I, D₁, D₂}
+```
+
+Some fusion categories are not found in the AnyonWiki, and thus have their own naming convention. These are most easily found by looking at the `src/artifacts.jl` file or the data branch.
+
+As shown above, the actual `Sector`s which represent the simple objects of the category are gotten through `Object{𝒞}` or `Object{𝒟}` values.
 
 ## `@objectnames`
  Should a more clear identification of the objects of a particular category be wanted, the macro `@objectnames` allows one to identify the integers `1` to `R` with custom `Symbol`s. An already done example is:

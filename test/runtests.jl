@@ -63,6 +63,41 @@ object_name_list = [Fib, Ising, H1, H2, H3] # these have unit alias :I
     end
 end
 
+@testset "Rank-2 aliases" begin
+    @test RepZ2 === PMFC{2, 1, 0, 1, 2, 1}
+    @test sVec === PMFC{2, 1, 0, 1, 2, 2}
+    @test Semion === PMFC{2, 1, 0, 1, 1, 1}
+    @test Semion⁻ === PMFC{2, 1, 0, 1, 1, 2}
+    @test Fib === PMFC{2, 1, 0, 2, 1, 2}
+    @test Fib⁻ === PMFC{2, 1, 0, 2, 1, 1}
+
+    @test Object{RepZ2}(:e) == Object{RepZ2}(2)
+    @test Object{sVec}(:ψ) == Object{sVec}(2)
+    @test Object{Semion}(:ϵ) == Object{Semion}(2)
+    @test Object{Fib}(:τ) == Object{Fib}(2)
+
+    φ = (1 + sqrt(5)) / 2
+    invariants = (
+        (RepZ2, [1, 1], [0 // 1, 0 // 1], 0 // 1),
+        (sVec, [1, 1], [0 // 1, 1 // 2], nothing),
+        (Semion, [1, 1], [0 // 1, 1 // 4], 1 // 1),
+        (Semion⁻, [1, 1], [0 // 1, -1 // 4], -1 // 1),
+        (Fib, [1, φ], [0 // 1, 2 // 5], 14 // 5),
+        (Fib⁻, [1, φ], [0 // 1, -2 // 5], -14 // 5),
+    )
+    for (C, quantum_dimensions, spins, central_charge) in invariants
+        I = Object{C}
+        objects = collect(values(I))
+        @test dim.(objects) ≈ quantum_dimensions
+        @test topological_spin.(objects) == spins
+        if isnothing(central_charge)
+            @test_throws AssertionError topological_central_charge(I)
+        else
+            @test topological_central_charge(I) == central_charge
+        end
+    end
+end
+
 @testset "Pretty printing of Sector Object{ZVecS3}" begin
     I = Object{ZVecS3}
     @test @constinferred(convert(I, :A)) == unit(I)

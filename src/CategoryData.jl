@@ -13,7 +13,8 @@ using SparseArrayKit
 
 export FusionRing, FusionCategory, BraidedCategory
 export FR, UFC, PMFC
-export RepA4, E6, Fib, Ising, H1, H2, H3, ZVecS3, ZVecD4
+export RepA4, E6, RepZ2, sVec, Semion, Semion⁻, Fib, Fib⁻
+export Ising, H1, H2, H3, ZVecS3, ZVecD4
 export Object
 export multiplicity, rank, algebraic_structure, selfduality
 export @objectnames
